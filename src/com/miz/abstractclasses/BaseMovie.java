@@ -1,13 +1,13 @@
 package com.miz.abstractclasses;
 
-import android.content.Context;
-
 import java.io.File;
 import java.util.Locale;
 
 import com.miz.functions.IOUtils;
 import com.miz.functions.MizLib;
 import com.miz.mizuu.MizuuApplication;
+
+import android.content.Context;
 
 public abstract class BaseMovie implements Comparable<BaseMovie> {
 
