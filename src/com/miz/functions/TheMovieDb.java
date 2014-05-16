@@ -1,5 +1,14 @@
 package com.miz.functions;
 
+import android.support.v4.content.LocalBroadcastManager;
+
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 import java.io.File;
 import java.util.Locale;
 
@@ -9,14 +18,6 @@ import com.miz.mizuu.R;
 import com.miz.widgets.MovieBackdropWidgetProvider;
 import com.miz.widgets.MovieCoverWidgetProvider;
 import com.miz.widgets.MovieStackWidgetProvider;
-
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.support.v4.content.LocalBroadcastManager;
 
 public class TheMovieDb {
 
@@ -111,6 +112,7 @@ public class TheMovieDb {
 	private void addToDatabase() {
 		// Create and open database
 		DbAdapter dbHelper = MizuuApplication.getMovieAdapter();
+		IOUtils.debug(this, "movie add: ", filepath, movie.getTitle());
 		
 		if (!isFromManualIdentify)
 			dbHelper.createMovie(filepath, movie.getCover(), movie.getTitle(), movie.getPlot(), movie.getId(), movie.getImdbId(), movie.getRating(), movie.getTagline(), movie.getReleasedate(), movie.getCertification(), movie.getRuntime(), movie.getTrailer(), movie.getGenres(), "0", movie.getCast(), movie.getCollectionTitle(), movie.getCollectionId(), "0", "0", String.valueOf(System.currentTimeMillis()));

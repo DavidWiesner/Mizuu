@@ -1,50 +1,5 @@
 package com.miz.functions;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import jcifs.smb.NtlmPasswordAuthentication;
-import jcifs.smb.SmbException;
-import jcifs.smb.SmbFile;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -90,6 +45,51 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import jcifs.smb.NtlmPasswordAuthentication;
+import jcifs.smb.SmbException;
+import jcifs.smb.SmbFile;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.miz.db.DbAdapterSources;
 import com.miz.db.DbAdapterTvShow;
 import com.miz.db.DbAdapterTvShowEpisode;
@@ -118,7 +118,17 @@ public class MizLib {
 	public static final String SERIAL_NUMBER = "serial_number";
 
 	public static final String tvdbLanguages = "en,sv,no,da,fi,nl,de,it,es,fr,pl,hu,el,tr,ru,he,ja,pt,zh,cs,sl,hr,ko";
-	public static final String allFileTypes = ".3gp.aaf.mp4.ts.webm.m4v.mkv.divx.xvid.rec.avi.flv.f4v.moi.mpeg.mpg.mts.m2ts.ogv.rm.rmvb.mov.wmv.iso.vob.ifo.wtv.pyv.ogm.img";
+	// For Performance has to end with a point
+	public static final String VIDEO_FILE_TYPES = ".3gp.aaf.mp4.ts.webm.m4v.mkv.divx.xvid.rec.avi.flv.f4v.moi.mpeg.mpg.mts.m2ts.ogv.rm.rmvb.mov.wmv.iso.vob.ifo.wtv.pyv.ogm.img."; 
+	public static final String SUBTITLE_FILE_TYPES = ".srt.sub.ssa.ssf.smi.txt.usf.ass.stp.idx.aqt.cvd.dks.jss.mpl.pjs.psb.rt.svcd.usf.";
+	static { // TEST
+		if(!VIDEO_FILE_TYPES.endsWith(".")){
+			throw new RuntimeException("VIDEO_FILE_TYPES has to end with a .");
+		}
+		if(!SUBTITLE_FILE_TYPES.endsWith(".")){
+			throw new RuntimeException("SUBTITLE_FILE_TYPES has to end with a .");
+		}
+	}
 	public static final String IMAGE_CACHE_DIR = "thumbs";
 	public static final String TMDB_BASE_URL = "http://image.tmdb.org/t/p/";
 	public static final String TMDB_API = "8f5f9f44983b8af692aae5f9974500f8";
@@ -151,14 +161,9 @@ public class MizLib {
 	}
 
 	public static boolean isVideoFile(String s) {
-		String[] fileTypes = new String[]{".3gp",".aaf.","mp4",".ts",".webm",".m4v",".mkv",".divx",".xvid",".rec",".avi",".flv",".f4v",".moi",".mpeg",".mpg",".mts",".m2ts",".ogv",".rm",".rmvb",".mov",".wmv",".iso",".vob",".ifo",".wtv",".pyv",".ogm",".img"};
-		int count = fileTypes.length;
-		for (int i = 0; i < count; i++)
-			if (s.endsWith(fileTypes[i]))
-				return true;
-		return false;
+		final String extension=getFileExtension(s);
+		return VIDEO_FILE_TYPES.contains(extension+'.');
 	}
-
 	/**
 	 * Converts the first character of a String to upper case.
 	 * @param s (input String)
@@ -778,24 +783,17 @@ public class MizLib {
 		return type;
 	}
 
+	/**
+	 * @deprecated use isVideoFile(String file) instead
+	 * @param file
+	 * @return
+	 */
 	public static boolean checkFileTypes(String file) {
-		if (file.contains(".")) { // Must have a file type
-			String type = file.substring(file.lastIndexOf("."));
-			String[] filetypes = allFileTypes.split("\\.");
-			int count = filetypes.length;
-			for (int i = 0; i < count; i++)
-				if (type.toLowerCase(Locale.ENGLISH).equals("." + filetypes[i]))
-					return true;
-		}
-		return false;
+		return isVideoFile(file);
 	}
 
 	public static boolean isNfoFile(String file) {
-		if (file.contains(".")) { // Must have a file type
-			String type = file.substring(file.lastIndexOf("."));
-			return type.equalsIgnoreCase(".nfo");
-		}
-		return false;
+		return file.endsWith(".nfo");
 	}
 
 	public static String removeExtension(String filepath) {
@@ -1345,11 +1343,8 @@ public class MizLib {
 	public static String[] subtitleFormats = new String[]{".srt", ".sub", ".ssa", ".ssf", ".smi", ".txt", ".usf", ".ass", ".stp", ".idx", ".aqt", ".cvd", ".dks", ".jss", ".mpl", ".pjs", ".psb", ".rt", ".svcd", ".usf"};
 
 	public static boolean isSubtitleFile(String s) {
-		int count = subtitleFormats.length;
-		for (int i = 0; i < count; i++)
-			if (s.endsWith(subtitleFormats[i]))
-				return true;
-		return false;
+		final String extension=getFileExtension(s);
+		return SUBTITLE_FILE_TYPES.contains(extension+'.');
 	}
 
 	public static List<SmbFile> getSubtitleFiles(String filepath, NtlmPasswordAuthentication auth) throws MalformedURLException, UnsupportedEncodingException {

@@ -19,7 +19,7 @@ public class TestMovieFileNames extends AndroidTestCase {
 			"/Movies/Fight Club (1999)/Fight Club (1999).mkv", // 7
 			"/Movies/Hackers (1995)/Hackers (1995).mkv", // 8
 			"/Abenteuer/Asterix und Obelix - Mission Kleopatra - 2002 - Abenteuer.avi", // 9
-			"/Filme/Animiert/Drachenzähmen leicht gemacht - 2010 - Animation.avi", // 10
+			"/Filme/Animiert/Drachenzï¿½hmen leicht gemacht - 2010 - Animation.avi", // 10
 			"/movies/Jack.the.Giant.Slayer.2013.1080p.BluRay.x264-SPARKS [PublicHD].mkv", // 11
 			"/AE, Apocalypse Earth.avi", // 12
 			"/Amerrika DVDSCR.avi", // 13
@@ -40,14 +40,14 @@ public class TestMovieFileNames extends AndroidTestCase {
 			"/Albert Nobbs [DVD Screener][Spanish][2012].avi", // 28
 			"/Algo Prestado [DVDScreener][Spanish][2011].avi", // 29
 			"/Amenazados [DVDRIP][Spanish AC3 5.1][2011][www.pctestrenos.com].avi", // 30
-			"/Babycall [BluRay Screener][EspañolCastellano][2012][www.newpct.com].avi", // 31
+			"/Babycall [BluRay Screener][Espaï¿½olCastellano][2012][www.newpct.com].avi", // 31
 			"/Batman Begins [DVDrip][AC3.5.1 Spanish][www.newpct.com].avi", // 32
-			"/Berserk La Edad de Oro I El huevo del rey conquistador [BRrip][AC3 5.1 Español Castellano][2012][www.newpct.com].avi", // 33
+			"/Berserk La Edad de Oro I El huevo del rey conquistador [BRrip][AC3 5.1 Espaï¿½ol Castellano][2012][www.newpct.com].avi", // 33
 			"/BlackThorn (Sin Destino) [DVDRIP][Spanish AC3 5.1][2011][www.newpct.com].avi", // 34
 			"/Bunraku [BluRay Screener][Spanish HQ][2012].avi", // 35
-			"/Chocolate [DVDrip][Español Castellano][2012][www.newpct.com].avi", // 36
-			"/El Alucinante Mundo de Norman [BluRay Screener][Español Castellano SINCRONIZADO][2012][www.newpct.com].avi", // 37
-			"/El Caballero Oscuro La Leyenda Renace [DVDRip][AC3 5.1 Español Castellano][2012][www.newpct.com].avi", // 38
+			"/Chocolate [DVDrip][Espaï¿½ol Castellano][2012][www.newpct.com].avi", // 36
+			"/El Alucinante Mundo de Norman [BluRay Screener][Espaï¿½ol Castellano SINCRONIZADO][2012][www.newpct.com].avi", // 37
+			"/El Caballero Oscuro La Leyenda Renace [DVDRip][AC3 5.1 Espaï¿½ol Castellano][2012][www.newpct.com].avi", // 38
 			"/El Ultimo Gran Dia [BluRay RIP][Spanish_English AC3 5.1][www.newpct.com].avi", // 39
 			"/Encontraras Dragones [DVDRIP][Spanish AC3 5.1][2011][www.newpct.com].avi", // 40
 			"/Gantz 2 [DVDRIP][Spanish AC3 5.1][2011][www.descargaya.es].avi", // 41
@@ -56,11 +56,11 @@ public class TestMovieFileNames extends AndroidTestCase {
 			"/Largo Winch 2 [DVDRIP][Spanish AC3 5.1][2012].avi", // 44
 			"/Los Idus De Marzo [ALTA DEFINICION 720p].avi", // 45
 			"/Otra Tierra [DVDRIP][Spanish AC3 5.1][2012][www.pctestrenos.com].avi", // 46
-			"/Prometheus [BRrip][AC3 5.1 Español Castellano][2012][www.newpct.com].avi", // 47
-			"/Redención (Tyrannosaur) [BluRay Screener][Spaniish][2012].avi", // 48
+			"/Prometheus [BRrip][AC3 5.1 Espaï¿½ol Castellano][2012][www.newpct.com].avi", // 47
+			"/Redenciï¿½n (Tyrannosaur) [BluRay Screener][Spaniish][2012].avi", // 48
 			"/Somos Marshall [DVDrip][AC3.Spanish][www.newpct.com].avi", // 49
-			"/The Amazing Spider-Man (Proper)[BluRayRIP][AC3 5.1 Español Castellano][2012][www.newpct.com].avi", // 50
-			"/Todos los Días de mi Vida [DVD Screener][Spanish][2012].avi", // 51
+			"/The Amazing Spider-Man (Proper)[BluRayRIP][AC3 5.1 Espaï¿½ol Castellano][2012][www.newpct.com].avi", // 50
+			"/Todos los Dï¿½as de mi Vida [DVD Screener][Spanish][2012].avi", // 51
 			"/Verbo [BluRayRIP][Spanish AC3 5.1][2012][www.newpct.com].avi", // 52
 			"/Valor De Ley [BluRay Screener][Spanish][2011].avi", // 53
 			"/Avatar DVDRIP.avi", // 54
@@ -69,7 +69,7 @@ public class TestMovieFileNames extends AndroidTestCase {
 			"/la familia savages cd1.avi", // 57
 			"/la familia savages cd2.avi", // 58
 			"/Los Simpsons La Pelicula - BLURAY.mkv", // 59
-			"/Mas Extraño Que La Ficción - BLURAY.mkv", // 60
+			"/Mas Extraï¿½o Que La Ficciï¿½n - BLURAY.mkv", // 60
 			"/Mi Ex Mi Novia y Yo - 2011 - DVDRIP.avi", // 61
 			"/L_HOMME_QUI_RIT/L_HOMME_QUI_RIT.mp4", // 62
 			"/Dr. No.(1962).avi", // 63
@@ -91,7 +91,7 @@ public class TestMovieFileNames extends AndroidTestCase {
 			"/2001.A.Space.Odyssey.(1968).mp4", // 79
 			"/The.Fellowship.of.the.Ring.(2001).[Ext].avi", // 80
 			"/The.Sorcerer's.Apprentice.(2010).avi", // 81
-			"/Le.Huitième.Jour.(1996).avi", // 82
+			"/Le.Huitiï¿½me.Jour.(1996).avi", // 82
 			"/Hysteria...The.Def.Leppard.Story.(2001).[ENGSUB].avi", // 83
 			"/Donnie.Darko.(2001).[DC].mp4", // 84
 			"/Ne.Le.Dis.A.Personne.(2006).[Tel.No.One].avi", // 85
@@ -146,7 +146,7 @@ public class TestMovieFileNames extends AndroidTestCase {
 		Assert.assertEquals("Fight Club", d[7].getDecryptedFileName());
 		Assert.assertEquals("Hackers", d[8].getDecryptedFileName());
 		Assert.assertEquals("Asterix und Obelix Mission Kleopatra", d[9].getDecryptedFileName());
-		Assert.assertEquals("Drachenzähmen leicht gemacht", d[10].getDecryptedFileName());
+		Assert.assertEquals("Drachenzï¿½hmen leicht gemacht", d[10].getDecryptedFileName());
 		Assert.assertEquals("Jack the Giant Slayer", d[11].getDecryptedFileName());
 		Assert.assertEquals("AE Apocalypse Earth", d[12].getDecryptedFileName());
 		Assert.assertEquals("Amerrika", d[13].getDecryptedFileName());
@@ -184,10 +184,10 @@ public class TestMovieFileNames extends AndroidTestCase {
 		Assert.assertEquals("Los Idus De Marzo", d[45].getDecryptedFileName());
 		Assert.assertEquals("Otra Tierra", d[46].getDecryptedFileName());
 		Assert.assertEquals("Prometheus", d[47].getDecryptedFileName());
-		Assert.assertEquals("Redención", d[48].getDecryptedFileName());
+		Assert.assertEquals("Redenciï¿½n", d[48].getDecryptedFileName());
 		Assert.assertEquals("Somos Marshall", d[49].getDecryptedFileName());
 		Assert.assertEquals("The Amazing SpiderMan", d[50].getDecryptedFileName());
-		Assert.assertEquals("Todos los Días de mi Vida", d[51].getDecryptedFileName());
+		Assert.assertEquals("Todos los Dï¿½as de mi Vida", d[51].getDecryptedFileName());
 		Assert.assertEquals("Verbo", d[52].getDecryptedFileName());
 		Assert.assertEquals("Valor De Ley", d[53].getDecryptedFileName());
 		Assert.assertEquals("Avatar", d[54].getDecryptedFileName());
@@ -196,7 +196,7 @@ public class TestMovieFileNames extends AndroidTestCase {
 		Assert.assertEquals("la familia savages", d[57].getDecryptedFileName());
 		Assert.assertEquals("la familia savages", d[58].getDecryptedFileName());
 		Assert.assertEquals("Los Simpsons La Pelicula", d[59].getDecryptedFileName());
-		Assert.assertEquals("Mas Extraño Que La Ficción", d[60].getDecryptedFileName());
+		Assert.assertEquals("Mas Extraï¿½o Que La Ficciï¿½n", d[60].getDecryptedFileName());
 		Assert.assertEquals("Mi Ex Mi Novia y Yo", d[61].getDecryptedFileName());
 		Assert.assertEquals("L'HOMME QUI RIT", d[62].getDecryptedFileName());
 		Assert.assertEquals("Dr No", d[63].getDecryptedFileName());
@@ -218,7 +218,7 @@ public class TestMovieFileNames extends AndroidTestCase {
 		Assert.assertEquals("2001 A Space Odyssey", d[79].getDecryptedFileName());
 		Assert.assertEquals("The Fellowship of the Ring", d[80].getDecryptedFileName());
 		Assert.assertEquals("The Sorcerers Apprentice", d[81].getDecryptedFileName());
-		Assert.assertEquals("Le Huitième Jour", d[82].getDecryptedFileName());
+		Assert.assertEquals("Le Huitiï¿½me Jour", d[82].getDecryptedFileName());
 		Assert.assertEquals("Hysteria The Def Leppard Story", d[83].getDecryptedFileName());
 		Assert.assertEquals("Donnie Darko", d[84].getDecryptedFileName());
 		Assert.assertEquals("Ne Le Dis A Personne", d[85].getDecryptedFileName());

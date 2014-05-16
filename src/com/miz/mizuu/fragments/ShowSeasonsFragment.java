@@ -1,12 +1,8 @@
 package com.miz.mizuu.fragments;
 
-import java.io.File;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 
-import jcifs.smb.SmbFile;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -23,8 +19,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.SparseIntArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -52,10 +46,19 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+import jcifs.smb.SmbFile;
+
 import com.miz.db.DbAdapterTvShow;
 import com.miz.db.DbAdapterTvShowEpisode;
 import com.miz.functions.AsyncTask;
 import com.miz.functions.FileSource;
+import com.miz.functions.IOUtils;
 import com.miz.functions.MizLib;
 import com.miz.mizuu.IdentifyTvShow;
 import com.miz.mizuu.MizuuApplication;
@@ -110,6 +113,7 @@ public class ShowSeasonsFragment extends Fragment {
 
 		prefsDisableEthernetWiFiCheck = settings.getBoolean("prefsDisableEthernetWiFiCheck", false);
 		ignoreDeletedFiles = settings.getBoolean("prefsIgnoredFilesEnabled", false);
+		IOUtils.debug(this, settings.getString("prefsSeasonsLayout", "<non>"), getString(R.string.listView), getString(R.string.gridView));
 		useGridView = settings.getString("prefsSeasonsLayout", getString(R.string.listView)).equals(getString(R.string.gridView)) ? true : false;
 		showOldestEpisodeFirst = settings.getString("prefsEpisodesOrder", getString(R.string.oldestFirst)).equals(getString(R.string.oldestFirst)) ? true : false;
 		if (MizLib.isGoogleTV(getActivity()))

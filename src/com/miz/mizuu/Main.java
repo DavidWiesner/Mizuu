@@ -1,10 +1,11 @@
 package com.miz.mizuu;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -18,12 +19,6 @@ import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,6 +31,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import com.miz.base.MizActivity;
 import com.miz.db.DbAdapter;
@@ -71,9 +72,9 @@ public class Main extends MizActivity {
 		super.onCreate(savedInstanceState);
 		
 		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(FULLSCREEN_TAG, false))
-			setTheme(R.style.Theme_Example_Light_FullScreen);
+			setTheme(R.style.Theme_Example_FullScreen);
 		else
-			setTheme(R.style.Theme_Example_Light);
+			setTheme(R.style.Theme_Example);
 		
 		setContentView(R.layout.menu_drawer);
 
