@@ -4,7 +4,6 @@ import android.content.Context;
 
 import java.io.File;
 
-import com.miz.functions.IOUtils;
 import com.miz.functions.MizLib;
 
 public class TvShowEpisode {
@@ -55,7 +54,6 @@ public class TvShowEpisode {
 	}
 	
 	public String getTitle() {
-		IOUtils.debug(this, "title", TITLE, FILEPATH);
 		if (TITLE == null || TITLE.isEmpty()) {
 			String temp = FILEPATH.contains("<MiZ>") ? FILEPATH.split("<MiZ>")[0] : FILEPATH;
 			File fileName = new File(temp);
