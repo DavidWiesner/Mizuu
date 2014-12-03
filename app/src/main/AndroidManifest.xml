@@ -178,7 +178,7 @@
         <!-- TV show episode details view -->
         <activity
             android:name="com.miz.mizuu.TvShowEpisodeDetails"
-            android:exported="false" >
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.DEFAULT" />
             </intent-filter>
@@ -639,6 +639,16 @@
             android:name="com.miz.contentprovider.TvShowActorContentProvider"
             android:authorities="com.miz.contentprovider.TvShowActorContentProvider"
             android:exported="false" />
+        <!-- Series Guide Extension -->
+        <service
+            android:name="com.miz.service.SeriesGuidePlayExtension"
+            android:description="@string/app_name"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="com.battlelancer.seriesguide.api.SeriesGuideExtension" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>
