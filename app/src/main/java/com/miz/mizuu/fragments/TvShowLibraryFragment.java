@@ -351,8 +351,6 @@ public class TvShowLibraryFragment extends Fragment implements ActionBar.OnNavig
 
 		if (mTvShows.size() == 0)
 			forceLoaderLoad();
-
-		notifyDataSetChanged();
 	}
 
 	@Override
@@ -535,7 +533,6 @@ public class TvShowLibraryFragment extends Fragment implements ActionBar.OnNavig
 				mTvShowKeys.addAll(mTempKeys);
 
 				sortTvShows();
-				notifyDataSetChanged();
 				setProgressBarVisible(false);
 			}
 		}
@@ -831,7 +828,6 @@ public class TvShowLibraryFragment extends Fragment implements ActionBar.OnNavig
 			}
 
 			sortTvShows();
-			notifyDataSetChanged();
 		}
 
 		dialog.dismiss();
@@ -896,7 +892,6 @@ public class TvShowLibraryFragment extends Fragment implements ActionBar.OnNavig
 			mTvShowKeys.addAll(mTempKeys);
 
 			sortTvShows();
-			notifyDataSetChanged();
 			setProgressBarVisible(false);
 		}
 	}
