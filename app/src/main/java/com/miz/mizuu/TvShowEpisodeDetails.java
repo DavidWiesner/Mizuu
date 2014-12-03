@@ -20,18 +20,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.widget.ImageView;
 
 import com.miz.base.MizActivity;
 import com.miz.db.DbAdapterTvShowEpisodes;
@@ -58,7 +52,7 @@ public class TvShowEpisodeDetails extends MizActivity {
 	protected int getLayoutResource() {
 		return R.layout.viewpager_with_toolbar_overlay;
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		mBus = MizuuApplication.getBus();
@@ -77,7 +71,7 @@ public class TvShowEpisodeDetails extends MizActivity {
 
 		mDatabaseHelper = MizuuApplication.getTvEpisodeDbAdapter();
 
-		Cursor cursor = mDatabaseHelper.getAllEpisodes(mShowId, DbAdapterTvShowEpisodes.OLDEST_FIRST);	
+		Cursor cursor = mDatabaseHelper.getAllEpisodes(mShowId, DbAdapterTvShowEpisodes.OLDEST_FIRST);
 		try {
 			while (cursor.moveToNext()) {
 				mEpisodes.add(new TvShowEpisode(this, mShowId,
@@ -172,17 +166,17 @@ public class TvShowEpisodeDetails extends MizActivity {
 			super(fm);
 		}
 
-		@Override  
+		@Override
 		public Fragment getItem(int index) {
 			return TvShowEpisodeDetailsFragment.newInstance(mShowId, Integer.parseInt(mEpisodes.get(index).getSeason()), Integer.parseInt(mEpisodes.get(index).getEpisode()));
-		}  
+		}
 
-		@Override  
-		public int getCount() {  
+		@Override
+		public int getCount() {
 			return mEpisodes.size();
 		}
 	}
-	
+
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 0) {
 			if (resultCode == Activity.RESULT_OK) {

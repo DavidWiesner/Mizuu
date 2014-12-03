@@ -73,7 +73,7 @@ public class TvShowEpisode implements Comparable<TvShowEpisode> {
 	}
 
 	public String getTitle() {
-		if (TextUtils.isEmpty(mTitle)) {
+		if (TextUtils.isEmpty(mTitle) && getFilepaths().size() > 0) {
 			String path = getFilepaths().get(0).getFullFilepath();
 			String temp = path.contains("<MiZ>") ? path.split("<MiZ>")[0] : path;
 			File fileName = new File(temp);

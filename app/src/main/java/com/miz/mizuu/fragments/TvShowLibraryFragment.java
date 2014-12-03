@@ -180,7 +180,17 @@ public class TvShowLibraryFragment extends Fragment implements ActionBar.OnNavig
 		setupActionBar();
 
 		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver, new IntentFilter(LocalBroadcastUtils.UPDATE_TV_SHOW_LIBRARY));
-		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver, new IntentFilter("mizuu-shows-actor-search"));
+		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver, new IntentFilter(
+				"mizuu-shows-actor-search"));
+
+		loadData();
+	}
+
+	private void loadData() {
+		if (mTvShows.size() == 0)
+			forceLoaderLoad();
+		else
+			notifyDataSetChanged();
 	}
 
 	private void setupActionBar() {
@@ -343,16 +353,6 @@ public class TvShowLibraryFragment extends Fragment implements ActionBar.OnNavig
 		intent.putExtra("showId", mTvShows.get(mTvShowKeys.get(arg2)).getId());
 		intent.setClass(getActivity(), TvShowDetails.class);
 		startActivityForResult(intent, 0);
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-
-		if (mTvShows.size() == 0)
-			forceLoaderLoad();
-
-		notifyDataSetChanged();
 	}
 
 	@Override
@@ -535,7 +535,6 @@ public class TvShowLibraryFragment extends Fragment implements ActionBar.OnNavig
 				mTvShowKeys.addAll(mTempKeys);
 
 				sortTvShows();
-				notifyDataSetChanged();
 				setProgressBarVisible(false);
 			}
 		}
@@ -831,7 +830,6 @@ public class TvShowLibraryFragment extends Fragment implements ActionBar.OnNavig
 			}
 
 			sortTvShows();
-			notifyDataSetChanged();
 		}
 
 		dialog.dismiss();
@@ -896,7 +894,6 @@ public class TvShowLibraryFragment extends Fragment implements ActionBar.OnNavig
 			mTvShowKeys.addAll(mTempKeys);
 
 			sortTvShows();
-			notifyDataSetChanged();
 			setProgressBarVisible(false);
 		}
 	}
