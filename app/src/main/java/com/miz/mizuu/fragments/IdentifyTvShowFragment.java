@@ -85,17 +85,19 @@ public class IdentifyTvShowFragment extends Fragment {
 	private LanguageAdapter mSpinnerAdapter;
 	private TvShowSearch mTvShowSearch;
     private Toolbar mToolbar;
+	private String[] mFiles;
 
 	/**
 	 * Empty constructor as per the Fragment documentation
 	 */
 	public IdentifyTvShowFragment() {}
 
-	public static IdentifyTvShowFragment newInstance(String showTitle, String showId) {
+	public static IdentifyTvShowFragment newInstance(String showTitle, String showId, final String[] files) {
 		IdentifyTvShowFragment frag = new IdentifyTvShowFragment();
 		Bundle args = new Bundle();
 		args.putString("showTitle", showTitle);
 		args.putString("showId", showId);
+		args.putStringArray("files", files);
 		frag.setArguments(args);
 		return frag;
 	}
@@ -111,6 +113,7 @@ public class IdentifyTvShowFragment extends Fragment {
 
 		mShowId = getArguments().getString("showId");
 		mShowTitle = getArguments().getString("showTitle");
+		mFiles = getArguments().getStringArray("files");
 
 		mPicasso = MizuuApplication.getPicasso(getActivity());
 		mConfig = MizuuApplication.getBitmapConfig();
@@ -226,6 +229,7 @@ public class IdentifyTvShowFragment extends Fragment {
 			b.putString("oldShowId", mShowId);
 			b.putString("newShowId", mAdapter.getItem(id).getId());
 			b.putString("language", getSelectedLanguage());
+			b.putStringArray("files", mFiles);
 			identifyService.putExtras(b);
 
 			getActivity().startService(identifyService);
