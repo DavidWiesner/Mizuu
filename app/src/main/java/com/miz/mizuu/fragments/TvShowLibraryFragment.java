@@ -351,6 +351,8 @@ public class TvShowLibraryFragment extends Fragment implements ActionBar.OnNavig
 
 		if (mTvShows.size() == 0)
 			forceLoaderLoad();
+		else
+			notifyDataSetChanged();
 	}
 
 	@Override
