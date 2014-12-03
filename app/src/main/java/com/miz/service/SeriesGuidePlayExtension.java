@@ -31,8 +31,6 @@ public class SeriesGuidePlayExtension extends SeriesGuideExtension {
 			intent.putExtra("showId", showTvdbId.toString());
 			intent.putExtra("season", episode.getSeason());
 			intent.putExtra("episode", episode.getNumber());
-			Log.w(getClass().getSimpleName(), "onRequest " + intent.getExtras().toString());
-			DatabaseUtils.dumpCursor(cursor);
 			publishAction(new Action.Builder("View on Mizuu", episodeIdentifier)
 					              .viewIntent(intent)
 					              .build());
