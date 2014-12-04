@@ -23,7 +23,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -55,6 +54,7 @@ public class IdentifyTvShowService extends IntentService implements TvShowLibrar
 	private int mEpisodeCount, mTotalFiles;
 	private NotificationManager mNotificationManager;
 	private NotificationCompat.Builder mBuilder;
+	private String[] mSearchFiles;
 
 	public IdentifyTvShowService() {
 		super("IdentifyTvShowService");
@@ -66,11 +66,12 @@ public class IdentifyTvShowService extends IntentService implements TvShowLibrar
 
 		log("onDestroy()");
 
-		if (mNotificationManager == null)
+		if (mNotificationManager == null) {
 			mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		}
 
 		mNotificationManager.cancel(NOTIFICATION_ID);
-		
+
 		LocalBroadcastUtils.updateTvShowLibrary(this);
 
 		WidgetUtils.updateTvShowWidgets(this);
@@ -81,16 +82,18 @@ public class IdentifyTvShowService extends IntentService implements TvShowLibrar
 
 		if (MizLib.isTvShowLibraryBeingUpdated(this)) {
 			Handler mHandler = new Handler(Looper.getMainLooper());
-			mHandler.post(new Runnable() {            
-		        @Override
-		        public void run() {
-		            Toast.makeText(IdentifyTvShowService.this, R.string.cant_identify_while_updating, Toast.LENGTH_LONG).show();                
-		        }
-		    });
-			
+			mHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					Toast.makeText(IdentifyTvShowService.this, R.string.cant_identify_while_updating,
+					               Toast.LENGTH_LONG)
+							.show();
+				}
+			});
+
 			return;
 		}
-		
+
 		log("clear()");
 		clear();
 
@@ -100,8 +103,9 @@ public class IdentifyTvShowService extends IntentService implements TvShowLibrar
 		log("Intent extras");
 		Bundle b = intent.getExtras();
 		mNewShowId = b.getString("newShowId");
-		mOldShowId = b.getString("oldShowId");
+		mOldShowId = b.getString("oldShowId", null);
 		mLanguage = b.getString("language", "all");
+		mSearchFiles = b.getStringArray("files");
 
 		log("setupList()");
 		setupList();
@@ -114,17 +118,25 @@ public class IdentifyTvShowService extends IntentService implements TvShowLibrar
 	}
 
 	private void setupList() {
-		Cursor cursor = MizuuApplication.getTvShowEpisodeMappingsDbAdapter().getAllFilepaths(mOldShowId);		
-		ColumnIndexCache cache = new ColumnIndexCache();
-		
-		try {
-			while (cursor.moveToNext())
-				mFiles.add(new ShowStructure(
-						cursor.getString(cache.getColumnIndex(cursor, DbAdapterTvShowEpisodeMappings.KEY_FILEPATH))
-						));
-		} catch (Exception e) {} finally {
-			cursor.close();
-			cache.clear();
+		if (mOldShowId == null) {
+			for (String file : mSearchFiles) {
+				mFiles.add(new ShowStructure(file));
+			}
+		} else {
+			Cursor cursor = MizuuApplication.getTvShowEpisodeMappingsDbAdapter().getAllFilepaths(mOldShowId);
+			ColumnIndexCache cache = new ColumnIndexCache();
+
+			try {
+				while (cursor.moveToNext()) {
+					mFiles.add(new ShowStructure(
+							cursor.getString(cache.getColumnIndex(cursor, DbAdapterTvShowEpisodeMappings.KEY_FILEPATH))
+					));
+				}
+			} catch (Exception e) {
+			} finally {
+				cursor.close();
+				cache.clear();
+			}
 		}
 
 		// Count all episodes
@@ -134,6 +146,9 @@ public class IdentifyTvShowService extends IntentService implements TvShowLibrar
 	}
 
 	private void removeOldDatabaseEntries() {
+		if(mOldShowId == null){
+			return;
+		}
 		// This will remove all episode mappings, episodes and the TV show from the database
 		boolean result = MizuuApplication.getTvShowEpisodeMappingsDbAdapter().deleteAllFilepaths(mOldShowId);
 		if (result) {
@@ -144,17 +159,18 @@ public class IdentifyTvShowService extends IntentService implements TvShowLibrar
 			// Delete season photos
 			File[] seasonPhotos = MizuuApplication.getTvShowSeasonFolder(this).listFiles();
 			for (int i = 0; i < seasonPhotos.length; i++) {
-				if (seasonPhotos[i].getName().startsWith(mOldShowId + "_S"))
+				if (seasonPhotos[i].getName().startsWith(mOldShowId + "_S")) {
 					seasonPhotos[i].delete();
+				}
 			}
 
 			// Delete episode photos
 			File[] episodePhotos = MizuuApplication.getTvShowEpisodeFolder(this).listFiles();
 			for (int i = 0; i < episodePhotos.length; i++) {
-				if (episodePhotos[i].getName().startsWith(mOldShowId + "_S"))
+				if (episodePhotos[i].getName().startsWith(mOldShowId + "_S")) {
 					episodePhotos[i].delete();
+				}
 			}
-			
 			LocalBroadcastUtils.updateTvShowLibrary(this);
 		}
 	}
@@ -180,7 +196,7 @@ public class IdentifyTvShowService extends IntentService implements TvShowLibrar
 	private void setup() {
 		// Setup up notification
 		mBuilder = new NotificationCompat.Builder(getApplicationContext());
-        mBuilder.setColor(getResources().getColor(R.color.color_primary));
+		mBuilder.setColor(getResources().getColor(R.color.color_primary));
 		mBuilder.setSmallIcon(R.drawable.ic_sync_white_24dp);
 		mBuilder.setTicker(getString(R.string.identifying_show));
 		mBuilder.setContentTitle(getString(R.string.identifying_show));
@@ -214,20 +230,23 @@ public class IdentifyTvShowService extends IntentService implements TvShowLibrar
 		String contentText = getString(R.string.stringJustAdded) + ": " + title;
 
 		mBuilder.setLargeIcon(cover);
-		mBuilder.setContentTitle(getString(R.string.identifying_show) + " (" + (int) ((100.0 / (double) mTotalFiles) * (double) mEpisodeCount) + "%)");
+		mBuilder.setContentTitle(getString(
+				R.string.identifying_show) + " (" + (int) ((100.0 / (double) mTotalFiles) * (double) mEpisodeCount) +
+				                         "%)");
 		mBuilder.setContentText(contentText);
 		mBuilder.setStyle(
 				new NotificationCompat.BigPictureStyle()
-				.setSummaryText(contentText)
-				.bigPicture(backdrop)
-				);
+						.setSummaryText(contentText)
+						.bigPicture(backdrop)
+		);
 
 		// Show the updated notification
 		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 	}
 
 	private void log(String msg) {
-		if (mDebugging)
+		if (mDebugging) {
 			Log.d("IdentifyTvShowService", msg);
+		}
 	}
 }

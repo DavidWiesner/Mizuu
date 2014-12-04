@@ -43,6 +43,7 @@ import android.widget.TextView;
 import com.miz.base.MizActivity;
 import com.miz.db.DbAdapterTvShowEpisodeMappings;
 import com.miz.functions.Filepath;
+import com.miz.identification.ShowStructure;
 import com.miz.utils.LocalBroadcastUtils;
 import com.miz.utils.TvShowDatabaseUtils;
 
@@ -57,7 +58,7 @@ public class UnidentifiedTvShows extends MizActivity {
 	protected int getLayoutResource() {
 		return R.layout.unidentified_files_layout;
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -68,9 +69,9 @@ public class UnidentifiedTvShows extends MizActivity {
 			@Override
 			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 				switch (item.getItemId()) {
-				case R.id.identify:
-					identifySelectedFiles();
-					break;
+					case R.id.identify:
+						identifySelectedFiles();
+						break;
 				}
 
 				mode.finish();
@@ -107,7 +108,7 @@ public class UnidentifiedTvShows extends MizActivity {
 
 			@Override
 			public void onItemCheckedStateChanged(ActionMode mode,
-					int position, long id, boolean checked) {
+			                                      int position, long id, boolean checked) {
 				mode.setTitle(mList.getCheckedItemCount() + " selected");
 			}
 		});
@@ -120,16 +121,17 @@ public class UnidentifiedTvShows extends MizActivity {
 
 		loadData();
 
-		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(LocalBroadcastUtils.UPDATE_TV_SHOW_LIBRARY));
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(
+				LocalBroadcastUtils.UPDATE_TV_SHOW_LIBRARY));
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		
+
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
 	}
-	
+
 	private void identifySelectedFiles() {
 		SparseBooleanArray sba = mList.getCheckedItemPositions();
 		ArrayList<String> filepaths = new ArrayList<String>();
@@ -137,11 +139,15 @@ public class UnidentifiedTvShows extends MizActivity {
 			filepaths.add(mFilepaths.get(sba.keyAt(i)).getFullFilepath());
 		}
 
+		if(filepaths.size()  == 0){
+			return;
+		}
+		String showTitle = new ShowStructure(filepaths.get(0)).getDecryptedFilename();
 		Intent i = new Intent();
 		i.setClass(this, IdentifyTvShow.class);
 		i.putExtra("files", filepaths.toArray(new String[filepaths.size()]));
-		i.putExtra("showName", "");
-		i.putExtra("oldShowId", "0");
+		i.putExtra("showName", showTitle);
+		i.putExtra("oldShowId", (String) null);
 		i.putExtra("includeShowData", true);
 		startActivity(i);
 	}
@@ -153,10 +159,12 @@ public class UnidentifiedTvShows extends MizActivity {
 		try {
 			if (cursor != null) {
 				while (cursor.moveToNext()) {
-					mFilepaths.add(new Filepath(cursor.getString(cursor.getColumnIndex(DbAdapterTvShowEpisodeMappings.KEY_FILEPATH))));
+					mFilepaths.add(new Filepath(cursor.getString(cursor.getColumnIndex(
+							DbAdapterTvShowEpisodeMappings.KEY_FILEPATH))));
 				}
 			}
-		} catch (Exception ignored) {} finally {
+		} catch (Exception ignored) {
+		} finally {
 			if (cursor != null)
 				cursor.close();
 		}
@@ -188,36 +196,36 @@ public class UnidentifiedTvShows extends MizActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			finish();			
-			return true;
-		case R.id.remove_all:
+			case android.R.id.home:
+				finish();
+				return true;
+			case R.id.remove_all:
 
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage(getString(R.string.areYouSure))
-			.setTitle(getString(R.string.removeAllUnidentifiedFiles))
-			.setCancelable(false)
-			.setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					
-					TvShowDatabaseUtils.removeAllUnidentifiedFiles();
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setMessage(getString(R.string.areYouSure))
+						.setTitle(getString(R.string.removeAllUnidentifiedFiles))
+						.setCancelable(false)
+						.setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
 
-					mFilepaths.clear();
-					
-					((BaseAdapter) mList.getAdapter()).notifyDataSetChanged();
-					enableNoFilesMessage(true);
-				}
-			})
-			.setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					dialog.cancel();
-				}
-			})
-			.create().show();
+								TvShowDatabaseUtils.removeAllUnidentifiedFiles();
 
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+								mFilepaths.clear();
+
+								((BaseAdapter) mList.getAdapter()).notifyDataSetChanged();
+								enableNoFilesMessage(true);
+							}
+						})
+						.setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						})
+						.create().show();
+
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
 

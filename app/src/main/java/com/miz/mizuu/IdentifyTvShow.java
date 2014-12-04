@@ -37,12 +37,13 @@ public class IdentifyTvShow extends MizActivity {
 
 		String showId = getIntent().getExtras().getString("showId");
 		String showTitle = getIntent().getExtras().getString("showTitle");
+		String[] files = getIntent().getExtras().getStringArray("files");
         mToolbarColor = getIntent().getExtras().getInt(IntentKeys.TOOLBAR_COLOR);
 
 		Fragment frag = getSupportFragmentManager().findFragmentByTag(TAG);
 		if (frag == null) {
 			final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.add(android.R.id.content, IdentifyTvShowFragment.newInstance(showTitle, showId), TAG);
+			ft.add(android.R.id.content, IdentifyTvShowFragment.newInstance(showTitle, showId, files), TAG);
 			ft.commit();
 		}
 	}

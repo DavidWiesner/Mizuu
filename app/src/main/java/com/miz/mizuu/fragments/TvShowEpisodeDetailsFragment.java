@@ -55,6 +55,7 @@ import com.miz.functions.FileSource;
 import com.miz.functions.Filepath;
 import com.miz.functions.MizLib;
 import com.miz.functions.PaletteLoader;
+import com.miz.identification.ShowStructure;
 import com.miz.mizuu.EditTvShowEpisode;
 import com.miz.mizuu.IdentifyTvShowEpisode;
 import com.miz.mizuu.MizuuApplication;
@@ -232,7 +233,7 @@ import static com.miz.functions.PreferenceKeys.SHOW_FILE_LOCATION;
                 final float ratio = (float) Math.min(Math.max(t, 0), headerHeight) / headerHeight;
                 final int newAlpha = (int) (ratio * 255);
 
-                mBus.post(new BusToolbarColorObject(mToolbarColor, newAlpha));
+	            mBus.post(new BusToolbarColorObject(mToolbarColor, newAlpha));
 
                 if (MizLib.isPortrait(mContext)) {
                     // Such parallax, much wow
@@ -659,7 +660,11 @@ import static com.miz.functions.PreferenceKeys.SHOW_FILE_LOCATION;
         filepaths.add(filepath);
         i.putExtra("filepaths", filepaths);
         i.putExtra("showId", mEpisode.getShowId());
-        i.putExtra("showTitle", MizuuApplication.getTvDbAdapter().getShowTitle(mEpisode.getShowId()));
+	    String showTitle = MizuuApplication.getTvDbAdapter().getShowTitle(mEpisode.getShowId());
+	    if(TextUtils.isEmpty(showTitle)){
+		    showTitle = new ShowStructure(filepath).getDecryptedFilename();
+	    }
+	    i.putExtra("showTitle", showTitle);
         return i;
     }
 

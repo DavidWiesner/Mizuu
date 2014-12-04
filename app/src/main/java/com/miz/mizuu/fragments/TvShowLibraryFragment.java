@@ -172,18 +172,20 @@ public class TvShowLibraryFragment extends Fragment implements ActionBar.OnNavig
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+        super.onActivityCreated(savedInstanceState);
 
         getActivity().setTitle(R.string.chooserTVShows);
 
-		// Setup ActionBar with the action list
-		setupActionBar();
+        // Setup ActionBar with the action list
+        setupActionBar();
 
-		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver, new IntentFilter(LocalBroadcastUtils.UPDATE_TV_SHOW_LIBRARY));
-		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver, new IntentFilter("mizuu-shows-actor-search"));
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver, new IntentFilter(
+            LocalBroadcastUtils.UPDATE_TV_SHOW_LIBRARY));
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver, new IntentFilter(
+            "mizuu-shows-actor-search"));
 
-		loadData();
-	}
+        loadData();
+    }
 
 	private void loadData() {
 		if (mTvShows.size() == 0)
@@ -771,10 +773,10 @@ public class TvShowLibraryFragment extends Fragment implements ActionBar.OnNavig
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(title)
 		.setItems(temp, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				handleDialogOnClick(dialog, which, type, temp);
-			}
-		});
+            public void onClick(DialogInterface dialog, int which) {
+                handleDialogOnClick(dialog, which, type, temp);
+            }
+        });
 		builder.show();
 	}
 
