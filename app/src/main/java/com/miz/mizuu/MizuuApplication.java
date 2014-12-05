@@ -38,7 +38,6 @@ import com.miz.db.DbAdapterTvShowEpisodeMappings;
 import com.miz.db.DbAdapterTvShowEpisodes;
 import com.miz.db.DbAdapterTvShows;
 import com.miz.functions.FileRequestTransformer;
-import com.miz.functions.MizLib;
 import com.miz.functions.OkHttpDownloader;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
@@ -110,8 +109,6 @@ public class MizuuApplication extends Application {
 		getAvailableOfflineFolder(this);
 
 		transitionLocalizationPreference();
-
-        MizLib.copyDatabase(this);
     }
 
 	@Override
@@ -271,10 +268,6 @@ public class MizuuApplication extends Application {
 		sPalettes.put(key, palette);
 	}
 
-	public static int getBackgroundColorResource(Context context) {
-		return R.color.dark_background;
-	}
-
 	public static boolean isFullscreen(Context context) {
 		return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(FULLSCREEN_TAG, false);
 	}
@@ -411,16 +404,12 @@ public class MizuuApplication extends Application {
 		mMovieFilepaths = filepaths;
 	}
 	
-	public static void clearMovieFilepaths() {
-		mMovieFilepaths.clear();
-	}
-	
 	public static List<String> getMovieFilepaths(String id) {
 		return mMovieFilepaths.get(id);
 	}
 	
 	/**
-	 * OkHttpClient singleton with 25 MB cache.
+	 * OkHttpClient singleton with 2 MB cache.
 	 * @return
 	 */
 	public static OkHttpClient getOkHttpClient() {
@@ -429,7 +418,7 @@ public class MizuuApplication extends Application {
 			
 			try {
 				File cacheDir = getContext().getCacheDir();
-			    Cache cache = new Cache(cacheDir, 25 * 1024 * 1024); // 25 MB cache
+			    Cache cache = new Cache(cacheDir, 2 * 1024 * 1024); // 25 MB cache
 			    mOkHttpClient.setCache(cache);
 			} catch (IOException e) {}
 		}

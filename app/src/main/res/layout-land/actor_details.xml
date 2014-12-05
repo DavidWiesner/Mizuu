@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -62,7 +61,6 @@
                         android:orientation="vertical"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/fab"
                         android:layout_toRightOf="@+id/cardview"
                         android:paddingTop="@dimen/content_details_baseline_margin"
                         android:layout_marginTop="@dimen/content_details_large_margin"
@@ -94,6 +92,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:baselineAligned="false"
                         android:id="@+id/details_area"
                         android:orientation="horizontal"
                         android:layout_width="fill_parent"
@@ -196,7 +195,6 @@
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:layout_below="@+id/details_area"
                 android:paddingBottom="@dimen/content_details_baseline_margin"
                 android:paddingLeft="@dimen/content_details_baseline_margin"
                 android:paddingRight="@dimen/content_details_baseline_margin" >

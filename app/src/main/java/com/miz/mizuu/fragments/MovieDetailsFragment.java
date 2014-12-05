@@ -29,7 +29,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.DataSetObserver;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -52,7 +51,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -116,7 +114,7 @@ public class MovieDetailsFragment extends Fragment {
     private ImageView mBackground, mCover;
     private Picasso mPicasso;
     private Typeface mLight, mMediumItalic, mMedium, mBold, mCondensedRegular;
-    private int mImageThumbSize, mImageThumbSpacing, mToolbarColor = 000000;
+    private int mImageThumbSize, mImageThumbSpacing, mToolbarColor = 0;
     private long mVideoPlaybackStarted, mVideoPlaybackEnded;
     private Toolbar mToolbar;
     private FloatingActionButton mFab;
@@ -711,7 +709,6 @@ public class MovieDetailsFragment extends Fragment {
 
                         notifyDatasetChanges();
                         getActivity().finish();
-                        return;
                     }
                 })
                 .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
@@ -890,7 +887,6 @@ public class MovieDetailsFragment extends Fragment {
                             if (!success)
                                 mMovie.getOfflineCopyFile(path).delete();
                             getActivity().invalidateOptionsMenu();
-                            return;
                         }
                     })
                     .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
@@ -915,7 +911,6 @@ public class MovieDetailsFragment extends Fragment {
                             i.putExtra("thumb", mMovie.getThumbnail().getAbsolutePath());
                             i.putExtra("backdrop", mMovie.getBackdrop().getAbsolutePath());
                             mContext.startService(i);
-                            return;
                         }
                     })
                     .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {

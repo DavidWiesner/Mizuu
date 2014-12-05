@@ -68,14 +68,13 @@ import com.miz.utils.TypefaceUtils;
 import com.miz.utils.ViewUtils;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 import static com.miz.functions.PreferenceKeys.GRID_ITEM_SIZE;
 import static com.miz.functions.PreferenceKeys.IGNORED_TITLE_PREFIXES;
 import static com.miz.functions.PreferenceKeys.SHOW_TITLES_IN_GRID;
 
-public class NewMovieLibraryFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class MovieLibraryFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private Context mContext;
     private SharedPreferences mSharedPreferences;
@@ -94,10 +93,10 @@ public class NewMovieLibraryFragment extends Fragment implements SharedPreferenc
     /**
      * Empty constructor as per the Fragment documentation
      */
-    public NewMovieLibraryFragment() {}
+    public MovieLibraryFragment() {}
 
-    public static NewMovieLibraryFragment newInstance(int type) {
-        NewMovieLibraryFragment frag = new NewMovieLibraryFragment();
+    public static MovieLibraryFragment newInstance(int type) {
+        MovieLibraryFragment frag = new MovieLibraryFragment();
         Bundle b = new Bundle();
         b.putInt("type", type);
         frag.setArguments(b);
@@ -189,9 +188,6 @@ public class NewMovieLibraryFragment extends Fragment implements SharedPreferenc
 
         mMovieLoader = new MovieLoader(mContext, MovieLibraryType.fromInt(getArguments().getInt("type")), callback);
         mMovieLoader.setIgnorePrefixes(mIgnorePrefixes);
-        if (mMovieLoader.getType() == MovieLibraryType.NEW_RELEASES) {
-            mMovieLoader.setSortType(MovieSortType.RELEASE);
-        }
         mMovieLoader.load();
         showProgressBar();
 

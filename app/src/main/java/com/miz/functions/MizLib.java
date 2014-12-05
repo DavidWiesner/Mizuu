@@ -100,7 +100,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -111,7 +113,6 @@ import java.util.regex.Pattern;
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
-import okio.BufferedSink;
 
 import static com.miz.functions.PreferenceKeys.DISABLE_ETHERNET_WIFI_CHECK;
 import static com.miz.functions.PreferenceKeys.IGNORE_FILE_SIZE;
@@ -182,14 +183,12 @@ public class MizLib {
 
 		String[] split = prefix.split(",");
 		int count = split.length;
-		for (int i = 0; i < count; i++)
-			prefixesArray.add(split[i]);
+        prefixesArray.addAll(Arrays.asList(split).subList(0, count));
 
 		count = prefixes.length;
-		for (int i = 0; i < count; i++)
-			prefixesArray.add(prefixes[i]);
+        prefixesArray.addAll(Arrays.asList(prefixes).subList(0, count));
 
-		return prefixesArray.toArray(new String[]{});
+		return prefixesArray.toArray(new String[prefixesArray.size()]);
 	}
 
 	public static boolean isVideoFile(String s) {
@@ -305,9 +304,8 @@ public class MizLib {
 	 * @return True if portrait mode, false if landscape mode
 	 */
 	public static boolean isPortrait(Context c) {
-		if (c == null) return false;
-		return (c.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) ? true : false;
-	}
+        return c != null && (c.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT);
+    }
 
 	/**
 	 * Determines if the device is currently connected to a network
@@ -604,7 +602,7 @@ public class MizLib {
                 actionBarHeight + statusBarHeight : actionBarHeight;
 	}
 
-	public static final String md5(final String s) {
+	public static String md5(final String s) {
 		try {
 			// Create MD5 Hash
 			MessageDigest digest = java.security.MessageDigest
@@ -1041,7 +1039,7 @@ public class MizLib {
 		for (int i = 0; i < filesources.size(); i++) {
 			if (filepath.contains(filesources.get(i).getFilepath())) {
 				source = filesources.get(i);
-				continue;
+				break;
 			}
 		}
 
@@ -1058,6 +1056,7 @@ public class MizLib {
 		String filename = filepath.substring(0, filepath.lastIndexOf(".")).replaceAll("part[1-9]|cd[1-9]", "").trim();
 
 		String[] list = MizuuApplication.getCifsFilesList(parentPath);
+
 		if (list == null) {
 			SmbFile s = new SmbFile(createSmbLoginString(
 					auth.getDomain(),
@@ -1066,9 +1065,12 @@ public class MizLib {
 					parentPath,
 					false));
 
-			list = s.list();
-			s = null;
-			MizuuApplication.putCifsFilesList(parentPath, list);
+            try {
+                list = s.list();
+                MizuuApplication.putCifsFilesList(parentPath, list);
+            } catch (Exception e) {
+                return null;
+            }
 		}
 
 		String name = "", absolutePath = "", customCoverArt = "";
@@ -1099,7 +1101,7 @@ public class MizLib {
 						absolutePath.equalsIgnoreCase(filename + ".jpeg") ||
 						absolutePath.equalsIgnoreCase(filename + ".tbn")) {
 					customCoverArt = absolutePath;
-					continue;
+					break;
 				}
 			}
 		} else {
@@ -1125,12 +1127,10 @@ public class MizLib {
 						absolutePath.equalsIgnoreCase(filename + "-backdrop.jpeg") ||
 						absolutePath.equalsIgnoreCase(filename + "-backdrop.tbn")) {
 					customCoverArt = absolutePath;
-					continue;
+					break;
 				}
 			}
 		}
-
-		list = null;
 
 		if (!TextUtils.isEmpty(customCoverArt))
 			return new SmbFile(createSmbLoginString(
@@ -1170,28 +1170,6 @@ public class MizLib {
 					filepath.replace(fileType, subtitleFormats[i]),
 					false)));
 		}
-
-		return subs;
-	}
-
-	public static List<SmbFile> getDVDFiles(String filepath, NtlmPasswordAuthentication auth) throws MalformedURLException {
-		ArrayList<SmbFile> subs = new ArrayList<SmbFile>();
-
-		try {
-			String s = filepath.substring(0, filepath.lastIndexOf("/"));
-			SmbFile dir = new SmbFile(createSmbLoginString(
-					auth.getDomain(),
-					auth.getUsername(),
-					auth.getPassword(),
-					s,
-					true));
-			SmbFile[] listFiles = dir.listFiles();
-			int count = listFiles.length;
-			for (int i = 0; i < count; i++) {
-				if (!listFiles[i].getName().equalsIgnoreCase("video_ts.ifo"))
-					subs.add(listFiles[i]);
-			}
-		} catch (Exception e) {}
 
 		return subs;
 	}
@@ -1454,8 +1432,7 @@ public class MizLib {
 
 	public static String getTraktUserName(Context c) {
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(c);
-		String username = settings.getString(TRAKT_USERNAME, "").trim();
-		return username;
+		return settings.getString(TRAKT_USERNAME, "").trim();
 	}
 
 	public static String removeWikipediaNotes(String original) {
@@ -1470,8 +1447,7 @@ public class MizLib {
 
 	public static String getParentFolder(String filepath) {
 		try {
-			String pathWithoutEnding = filepath.substring(0, filepath.lastIndexOf("/"));
-			return pathWithoutEnding;
+			return filepath.substring(0, filepath.lastIndexOf("/"));
 		} catch (Exception e) {
 			return "";
 		}
@@ -1878,15 +1854,11 @@ public class MizLib {
 
 		File[] f = MizuuApplication.getMovieBackdropFolder(c).listFiles();
 		if (f != null)
-			for (File file : f) {
-				files.add(file);
-			}
+            Collections.addAll(files, f);
 
 		f = MizuuApplication.getTvShowBackdropFolder(c).listFiles();
 		if (f != null)
-			for (File file : f) {
-				files.add(file);
-			}
+            Collections.addAll(files, f);
 
 		if (files.size() > 0) {
 			Random rndm = new Random();

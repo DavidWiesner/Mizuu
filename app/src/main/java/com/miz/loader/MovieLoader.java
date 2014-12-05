@@ -20,20 +20,22 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.miz.db.DbAdapterMovieMappings;
 import com.miz.db.DbAdapterMovies;
-import com.miz.db.DbAdapterSources;
 import com.miz.functions.ColumnIndexCache;
 import com.miz.functions.FileSource;
 import com.miz.functions.Filepath;
 import com.miz.functions.LibrarySectionAsyncTask;
 import com.miz.functions.MediumMovie;
 import com.miz.functions.MizLib;
+import com.miz.functions.PreferenceKeys;
 import com.miz.mizuu.MizuuApplication;
 import com.miz.mizuu.R;
 
@@ -68,6 +70,14 @@ public class MovieLoader {
             DATE_ADDED = 6,
             COLLECTION_TITLE = 7;
 
+    // For saving the sorting type preference
+    public static final String SORT_TITLE = "sortTitle",
+            SORT_RELEASE = "sortRelease",
+            SORT_RATING = "sortRating",
+            SORT_WEIGHTED_RATING = "sortWeightedRating",
+            SORT_DATE_ADDED = "sortAdded",
+            SORT_DURATION = "sortDuration";
+
     private final Context mContext;
     private final MovieLibraryType mLibraryType;
     private final OnLoadCompletedCallback mCallback;
@@ -86,11 +96,15 @@ public class MovieLoader {
         mCallback = callback;
         mDatabase = MizuuApplication.getMovieAdapter();
 
-        // Sort by title by default
-        setSortType(mLibraryType != MovieLibraryType.COLLECTIONS ?
-                MovieSortType.TITLE : MovieSortType.COLLECTION_TITLE);
+        setupSortType();
     }
 
+    /**
+     * Get movie library type. Can be either <code>ALL_MOVIES</code>,
+     * <code>FAVORITES</code>, <code>NEW_RELEASES</code>, <code>WATCHLIST</code>,
+     * <code>WATCHED</code>, <code>UNWATCHED</code> or <code>COLLECTIONS</code>.
+     * @return Movie library type
+     */
     public MovieLibraryType getType() {
         return mLibraryType;
     }
@@ -103,43 +117,113 @@ public class MovieLoader {
         mIgnorePrefixes = ignore;
     }
 
+    /**
+     * Set the movie sort type.
+     * @param type
+     */
     public void setSortType(MovieSortType type) {
         if (getSortType() == type) {
             getSortType().toggleSortOrder();
         } else {
             mSortType = type;
+
+            // If we're setting a sort type for the "All movies"
+            // section, we want to save the sort type as the
+            // default way of sorting that section.
+            if (getType() == MovieLibraryType.ALL_MOVIES) {
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
+                switch (getSortType()) {
+                    case TITLE:
+                        editor.putString(PreferenceKeys.SORTING_MOVIES, SORT_TITLE);
+                        break;
+                    case RELEASE:
+                        editor.putString(PreferenceKeys.SORTING_MOVIES, SORT_RELEASE);
+                        break;
+                    case RATING:
+                        editor.putString(PreferenceKeys.SORTING_MOVIES, SORT_RATING);
+                        break;
+                    case WEIGHTED_RATING:
+                        editor.putString(PreferenceKeys.SORTING_MOVIES, SORT_WEIGHTED_RATING);
+                        break;
+                    case DATE_ADDED:
+                        editor.putString(PreferenceKeys.SORTING_MOVIES, SORT_DATE_ADDED);
+                        break;
+                    case DURATION:
+                        editor.putString(PreferenceKeys.SORTING_MOVIES, SORT_DURATION);
+                        break;
+                }
+                editor.apply();
+            }
         }
     }
 
+    /**
+     * Get the movie sort type. Can be either <code>TITLE</code>,
+     * <code>RELEASE</code>, <code>DURATION</code>, <code>RATING</code>,
+     * <code>WEIGHTED_RATING</code>, <code>DATE_ADDED</code> or <code>COLLECTION_TITLE</code>.
+     * @return Movie sort type
+     */
     public MovieSortType getSortType() {
         return mSortType;
     }
 
+    /**
+     * Used to know if the MovieLoader is currently
+     * showing search results.
+     * @return True if showing search results, false otherwise.
+     */
     public boolean isShowingSearchResults() {
         return mShowingSearchResults;
     }
 
+    /**
+     * Add a movie filter. Filters are unique and only one
+     * can be present at a time. It is, however, possible to
+     * have multiple filters for different filter types, i.e.
+     * two filters for genres.
+     * @param filter
+     */
     public void addFilter(MovieFilter filter) {
         mFilters.remove(filter);
         mFilters.add(filter);
     }
 
+    /**
+     * Clears all filters.
+     */
     public void clearFilters() {
         mFilters.clear();
     }
 
+    /**
+     * Get all movie filters.
+     * @return Set of all currently added movie filters.
+     */
     public HashSet<MovieFilter> getFilters() {
         return mFilters;
     }
 
+    /**
+     * Starts loading movies using any active filters,
+     * sorting types and settings, i.e. prefix ignoring.
+     */
     public void load() {
         load("");
     }
 
+    /**
+     * Similar to <code>load()</code>, but filters the results
+     * based on the search query.
+     * @param query
+     */
     public void search(String query) {
         load(query);
     }
 
+    /**
+     * Starts loading movies.
+     * @param query
+     */
     private void load(String query) {
         if (mAsyncTask != null) {
             mAsyncTask.cancel(true);
@@ -154,7 +238,7 @@ public class MovieLoader {
     /**
      * Creates movie objects from a Cursor and adds them to a list.
      * @param cursor
-     * @return
+     * @return List of movie objects from the supplied Cursor.
      */
     private ArrayList<MediumMovie> listFromCursor(Cursor cursor) {
 
@@ -213,10 +297,18 @@ public class MovieLoader {
         return list;
     }
 
+    /**
+     * Get the results of the most recently loaded movies.
+     * @return List of movie objects.
+     */
     public ArrayList<MediumMovie> getResults() {
         return mResults;
     }
 
+    /**
+     * Handles everything related to loading, filtering, sorting
+     * and delivering the callback when everything is finished.
+     */
     private class MovieLoaderAsyncTask extends LibrarySectionAsyncTask<Void, Void, Void> {
 
         private final ArrayList<MediumMovie> mMovieList;
@@ -264,6 +356,9 @@ public class MovieLoader {
 
             for (MovieFilter filter : getFilters()) {
                 for (int i = 0; i < totalSize; i++) {
+
+                    if (isCancelled())
+                        return null;
 
                     boolean condition = false;
 
@@ -344,7 +439,7 @@ public class MovieLoader {
                                                 for (int j = 0; j < filesources.size(); j++)
                                                     if (path.getFilepath().contains(filesources.get(j).getFilepath())) {
                                                         source = filesources.get(j);
-                                                        continue;
+                                                        break;
                                                     }
 
                                                 if (source == null)
@@ -477,6 +572,10 @@ public class MovieLoader {
         }
     }
 
+    /**
+     * Show genres filter dialog.
+     * @param activity
+     */
     public void showGenresFilterDialog(Activity activity) {
         final TreeMap<String, Integer> map = new TreeMap<String, Integer>();
         String[] splitGenres;
@@ -496,6 +595,10 @@ public class MovieLoader {
         createAndShowAlertDialog(activity, setupItemArray(map), R.string.selectGenre, MovieFilter.GENRE);
     }
 
+    /**
+     * Show certifications filter dialog.
+     * @param activity
+     */
     public void showCertificationsFilterDialog(Activity activity) {
         final TreeMap<String, Integer> map = new TreeMap<String, Integer>();
         for (int i = 0; i < mResults.size(); i++) {
@@ -512,6 +615,10 @@ public class MovieLoader {
         createAndShowAlertDialog(activity, setupItemArray(map), R.string.selectCertification, MovieFilter.CERTIFICATION);
     }
 
+    /**
+     * Show release year filter dialog.
+     * @param activity
+     */
     public void showReleaseYearFilterDialog(Activity activity) {
         final TreeMap<String, Integer> map = new TreeMap<String, Integer>();
         for (int i = 0; i < mResults.size(); i++) {
@@ -528,6 +635,10 @@ public class MovieLoader {
         createAndShowAlertDialog(activity, setupItemArray(map), R.string.selectReleaseYear, MovieFilter.RELEASE_YEAR);
     }
 
+    /**
+     * Show file sources filter dialog.
+     * @param activity
+     */
     public void showFileSourcesFilterDialog(Activity activity) {
         final TreeMap<String, Integer> map = new TreeMap<String, Integer>();
 
@@ -545,6 +656,10 @@ public class MovieLoader {
         createAndShowAlertDialog(activity, setupItemArray(map), R.string.selectFileSource, MovieFilter.FILE_SOURCE);
     }
 
+    /**
+     * Show folders filter dialog.
+     * @param activity
+     */
     public void showFoldersFilterDialog(Activity activity) {
         final TreeMap<String, Integer> map = new TreeMap<String, Integer>();
         for (int i = 0; i < mResults.size(); i++) {
@@ -563,6 +678,11 @@ public class MovieLoader {
         createAndShowAlertDialog(activity, setupItemArray(map), R.string.selectFolder, MovieFilter.FOLDER);
     }
 
+    /**
+     * Used to set up an array of items for the alert dialog.
+     * @param map
+     * @return List of dialog options.
+     */
     private CharSequence[] setupItemArray(TreeMap<String, Integer> map) {
         final CharSequence[] tempArray = map.keySet().toArray(new CharSequence[map.keySet().size()]);
         for (int i = 0; i < tempArray.length; i++)
@@ -571,6 +691,13 @@ public class MovieLoader {
         return tempArray;
     }
 
+    /**
+     * Shows an alert dialog and handles the user selection.
+     * @param activity
+     * @param temp
+     * @param title
+     * @param type
+     */
     private void createAndShowAlertDialog(Activity activity, final CharSequence[] temp, int title, final int type) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(title)
@@ -593,5 +720,50 @@ public class MovieLoader {
                     }
                 });
         builder.show();
+    }
+
+    /**
+     * Sets the sort type depending on the movie
+     * library type. The collections library will
+     * always be sorted by collection title, the
+     * "New releases" library will be sorted by
+     * release date and the "All movies" library
+     * will be sorted by the user's preference, if
+     * such exists. If not, it'll sort by movie title
+     * like the other library types do by default.
+     */
+    private void setupSortType() {
+        if (getType() == MovieLibraryType.ALL_MOVIES) {
+
+            // Load the saved sort type and set it
+            String savedSortType = PreferenceManager.getDefaultSharedPreferences(mContext).getString(PreferenceKeys.SORTING_MOVIES, SORT_TITLE);
+
+            switch (savedSortType) {
+                case SORT_TITLE:
+                    setSortType(MovieSortType.TITLE);
+                    break;
+                case SORT_RELEASE:
+                    setSortType(MovieSortType.RELEASE);
+                    break;
+                case SORT_RATING:
+                    setSortType(MovieSortType.RATING);
+                    break;
+                case SORT_WEIGHTED_RATING:
+                    setSortType(MovieSortType.WEIGHTED_RATING);
+                    break;
+                case SORT_DATE_ADDED:
+                    setSortType(MovieSortType.DATE_ADDED);
+                    break;
+                case SORT_DURATION:
+                    setSortType(MovieSortType.DURATION);
+                    break;
+            }
+        } else if (getType() == MovieLibraryType.COLLECTIONS) {
+            setSortType(MovieSortType.COLLECTION_TITLE);
+        } else if (getType() == MovieLibraryType.NEW_RELEASES) {
+            setSortType(MovieSortType.RELEASE);
+        } else {
+            setSortType(MovieSortType.TITLE);
+        }
     }
 }

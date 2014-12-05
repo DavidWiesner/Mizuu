@@ -11,24 +11,45 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <com.miz.views.LargeGridItemImageView
+        <com.miz.views.GridItemImageView
             android:id="@+id/cover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop" />
+            android:adjustViewBounds="true"
+            android:cropToPadding="true"
+            android:scaleType="centerCrop"
+            android:transitionName="cover" />
 
         <TextView
-            android:padding="4dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:paddingTop="4dp"
             android:id="@+id/text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:maxLines="2"
-            android:lines="2"
+            android:maxLines="1"
+            android:lines="1"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/card_title_color"
             android:textIsSelectable="false"
             android:textStyle="bold" />
+
+        <TextView
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:paddingBottom="4dp"
+            android:id="@+id/sub_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:lines="1"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="12sp"
+            android:textColor="#999"
+            android:textIsSelectable="false"
+            android:textStyle="italic" />
 
     </LinearLayout>
 

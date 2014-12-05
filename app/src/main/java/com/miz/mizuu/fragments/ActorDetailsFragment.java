@@ -23,7 +23,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.SharedElementCallback;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -52,8 +51,6 @@ import com.miz.views.ObservableScrollView.OnScrollChangedListener;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
-
 public class ActorDetailsFragment extends Fragment {
 
 	private String mActorId;
@@ -63,7 +60,7 @@ public class ActorDetailsFragment extends Fragment {
 	private ImageView mPhoto, mBackdrop;
     private ObservableScrollView mScrollView;
 	private HorizontalCardLayout mMovieCards, mTvCards, mPhotoCards, mTaggedPhotoCards;
-	private int mImageThumbSize, mImageThumbBackdropSize, mImageThumbSpacing, mToolbarColor = 000000;
+	private int mImageThumbSize, mImageThumbBackdropSize, mImageThumbSpacing, mToolbarColor = 0;
     private Typeface mMedium, mBold, mCondensedRegular;
 	private View mProgressLayout, mDetailsLayout;
 	private Picasso mPicasso;

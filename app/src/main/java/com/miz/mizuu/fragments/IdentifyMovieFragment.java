@@ -286,11 +286,8 @@ public class IdentifyMovieFragment extends Fragment {
 							);
 				}
 
-				if (isCancelled())
-					return false;
-
-				return true;
-			} catch (Exception e) {}
+                return !isCancelled();
+            } catch (Exception e) {}
 
 			return false;
 		}
@@ -536,7 +533,7 @@ public class IdentifyMovieFragment extends Fragment {
 		public View getView(int position, View convertView, ViewGroup parent) {
 
 			if (convertView == null) {
-				convertView = (TextView) mInflater.inflate(android.R.layout.simple_spinner_item, parent, false);
+				convertView = mInflater.inflate(android.R.layout.simple_spinner_item, parent, false);
 			}
 
 			((TextView) convertView).setText(mLocales.get(position).getDisplayLanguage(Locale.getDefault()));
@@ -563,7 +560,7 @@ public class IdentifyMovieFragment extends Fragment {
 		public View getDropDownView(int position, View convertView, ViewGroup parent) {
 
 			if (convertView == null) {
-				convertView = (TextView) mInflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+				convertView = mInflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
 			}
 
 			((TextView) convertView).setText(mLocales.get(position).getDisplayLanguage(Locale.getDefault()));

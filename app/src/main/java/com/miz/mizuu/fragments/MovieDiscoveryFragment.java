@@ -98,7 +98,7 @@ public class MovieDiscoveryFragment extends Fragment implements OnSharedPreferen
 		if (thumbnailSize.equals(getString(R.string.large))) 
 			mImageThumbSize = (int) (getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size) * 1.33);
 		else if (thumbnailSize.equals(getString(R.string.normal))) 
-			mImageThumbSize = (int) (getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size) * 1);
+			mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size) * 1;
 		else
 			mImageThumbSize = (int) (getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size) * 0.75);
 		mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
@@ -208,14 +208,14 @@ public class MovieDiscoveryFragment extends Fragment implements OnSharedPreferen
 			CoverItem holder;
 
 			if (convertView == null) {
-				convertView = inflater.inflate(R.layout.grid_item, container, false);
+				convertView = inflater.inflate(R.layout.grid_cover_two_line, container, false);
 				holder = new CoverItem();
 
 				holder.mLinearLayout = (LinearLayout) convertView.findViewById(R.id.card_layout);
 				holder.cover = (ImageView) convertView.findViewById(R.id.cover);
 				holder.text = (TextView) convertView.findViewById(R.id.text);
 				holder.text.setSingleLine(true);
-				holder.subtext = (TextView) convertView.findViewById(R.id.gridCoverSubtitle);
+				holder.subtext = (TextView) convertView.findViewById(R.id.sub_text);
 				holder.subtext.setSingleLine(true);
 
 				holder.text.setTypeface(TypefaceUtils.getRobotoMedium(mContext));
@@ -304,7 +304,7 @@ public class MovieDiscoveryFragment extends Fragment implements OnSharedPreferen
 			if (thumbnailSize.equals(getString(R.string.large))) 
 				mImageThumbSize = (int) (getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size) * 1.33);
 			else if (thumbnailSize.equals(getString(R.string.normal))) 
-				mImageThumbSize = (int) (getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size) * 1);
+				mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size) * 1;
 			else
 				mImageThumbSize = (int) (getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size) * 0.75);
 

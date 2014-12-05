@@ -23,11 +23,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.miz.base.MizActivity;
-import com.miz.functions.MizLib;
 import com.miz.mizuu.fragments.TvShowDetailsFragment;
 import com.miz.utils.ViewUtils;
 
@@ -101,7 +99,6 @@ public class TvShowDetails extends MizActivity {
                 startActivity(intent);
 
                 finish();
-                return;
             }
         }
     }

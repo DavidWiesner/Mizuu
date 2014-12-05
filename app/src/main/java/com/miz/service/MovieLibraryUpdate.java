@@ -28,7 +28,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -159,7 +158,7 @@ public class MovieLibraryUpdate extends IntentService implements MovieLibraryUpd
 			// time the user wants to update the library
 			mEditor = mSettings.edit();
 			mEditor.putBoolean(CLEAR_LIBRARY_MOVIES, false);
-			mEditor.commit();
+			mEditor.apply();
 
 			log("removeMoviesFromDatabase()");
 
@@ -334,8 +333,6 @@ public class MovieLibraryUpdate extends IntentService implements MovieLibraryUpd
 		mDisableEthernetWiFiCheck = mSettings.getBoolean(DISABLE_ETHERNET_WIFI_CHECK, false);
 		mIgnoreRemovedFiles = mSettings.getBoolean(IGNORED_FILES_ENABLED, false);
 		mSyncLibraries = mSettings.getBoolean(SYNC_WITH_TRAKT, true);
-
-		mEditor = mSettings.edit();
 	}
 
 	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {

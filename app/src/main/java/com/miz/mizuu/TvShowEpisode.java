@@ -62,8 +62,10 @@ public class TvShowEpisode implements Comparable<TvShowEpisode> {
 		sb.append(mContext.getString(R.string.showEpisode));
 		sb.append(" ");
 		sb.append(getEpisode());
-		if (!hasWatched())
-			sb.append(" " + mContext.getString(R.string.unwatched));
+		if (!hasWatched()) {
+            sb.append(" ");
+            sb.append(mContext.getString(R.string.unwatched));
+        }
 
 		mSubtitleText = sb.toString();
 	}
@@ -143,7 +145,7 @@ public class TvShowEpisode implements Comparable<TvShowEpisode> {
 	}
 
 	public boolean hasWatched() {
-		return (mHasWatched.isEmpty() || mHasWatched.equals("0")) ? false : true;
+		return (!(mHasWatched.isEmpty() || mHasWatched.equals("0")));
 	}
 
 	public String getHasWatched() {
@@ -158,7 +160,7 @@ public class TvShowEpisode implements Comparable<TvShowEpisode> {
 	}
 
 	public boolean isFavorite() {
-		return (mFavorite.isEmpty() || mFavorite.equals("0")) ? false : true;
+		return (!(mFavorite.isEmpty() || mFavorite.equals("0")));
 	}
 
 	public String getFavorite() {

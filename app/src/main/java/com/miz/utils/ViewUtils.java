@@ -404,7 +404,7 @@ public class ViewUtils {
 
     public static boolean isTranslucentDecorAvailable(Context context) {
         int id = context.getResources().getIdentifier("config_enableTranslucentDecor", "bool", "android");
-        return (id == 0) ? false : context.getResources().getBoolean(id);
+        return (id == 0) && context.getResources().getBoolean(id);
     }
 
     public static int getStatusBarHeight(Context context) {
@@ -553,7 +553,7 @@ public class ViewUtils {
         if (thumbnailSize.equals(context.getString(R.string.large)))
             thumbSize = (int) (context.getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size) * 1.33);
         else if (thumbnailSize.equals(context.getString(R.string.normal)))
-            thumbSize = (int) (context.getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size) * 1);
+            thumbSize = (context.getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size) * 1);
         else
             thumbSize = (int) (context.getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size) * 0.75);
 

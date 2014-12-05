@@ -68,7 +68,7 @@ public class SmbMovie extends MovieFileSource<SmbFile> {
 						for (int j = 0; j < filesources.size(); j++)
 							if (dbMovies.get(i).getFilepath().contains(filesources.get(j).getFilepath())) {
 								source = filesources.get(j);
-								continue;
+								break;
 							}
 
 						if (source == null) {
@@ -113,7 +113,7 @@ public class SmbMovie extends MovieFileSource<SmbFile> {
 						for (int j = 0; j < filesources.size(); j++)
 							if (dbMovies.get(i).getFilepath().contains(filesources.get(j).getFilepath())) {
 								source = filesources.get(j);
-								continue;
+								break;
 							}
 
 						if (source == null) {
@@ -257,7 +257,7 @@ public class SmbMovie extends MovieFileSource<SmbFile> {
 	public SmbFile getRootFolder() {
 		try {
 			FileSource fs = getFileSource();
-			SmbFile root = new SmbFile(
+            return new SmbFile(
 					MizLib.createSmbLoginString(
 							fs.getDomain(),
 							fs.getUser(),
@@ -265,7 +265,6 @@ public class SmbMovie extends MovieFileSource<SmbFile> {
 							fs.getFilepath(),
 							true
 							));
-			return root;
 		} catch (Exception e) {}
 		return null;
 	}

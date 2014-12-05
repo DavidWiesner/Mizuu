@@ -108,7 +108,7 @@ public class TvShowDetailsFragment extends Fragment {
     private Typeface mMediumItalic, mMedium, mBold, mCondensedRegular;
     private Bus mBus;
     private HorizontalCardLayout mSeasonsLayout, mActorsLayout;
-    private int mImageThumbSize, mImageThumbSpacing, mToolbarColor = 000000;
+    private int mImageThumbSize, mImageThumbSpacing, mToolbarColor = 0;
     private Toolbar mToolbar;
     private FloatingActionButton mFab;
     private PaletteLoader mPaletteLoader;
@@ -634,7 +634,6 @@ public class TvShowDetailsFragment extends Fragment {
                         MizLib.deleteShow(getActivity().getApplicationContext(), thisShow, true);
                         LocalBroadcastUtils.updateTvShowLibrary(getActivity().getApplicationContext());
                         getActivity().finish();
-                        return;
                     }
                 })
                 .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
