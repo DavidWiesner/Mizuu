@@ -130,7 +130,7 @@ public class TvShowSeasonsFragment extends Fragment {
 
     @Subscribe
     public void refreshData(com.miz.mizuu.TvShowEpisode episode) {
-        loadSeasons(false);
+        loadSeasons();
     }
 
     @Override
@@ -238,11 +238,11 @@ public class TvShowSeasonsFragment extends Fragment {
         });
 
         // The layout has been created - let's load the data
-        loadSeasons(true);
+        loadSeasons();
     }
 
-    private void loadSeasons(boolean selectFirstSeason) {
-        new SeasonLoader(selectFirstSeason).execute();
+    private void loadSeasons() {
+        new SeasonLoader().execute();
     }
 
     private void changeWatchedStatus(boolean watched, final Set<Integer> selectedSeasons) {
@@ -258,7 +258,7 @@ public class TvShowSeasonsFragment extends Fragment {
         if (MizLib.isOnline(mContext) && Trakt.hasTraktAccount(mContext))
             syncWatchedStatusWithTrakt(selectedSeasons, watched);
 
-        loadSeasons(true);
+        loadSeasons();
     }
 
     private void removeSelectedSeasons(final Set<Integer> selectedSeasons) {
@@ -273,7 +273,7 @@ public class TvShowSeasonsFragment extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 // Go through all seasons and remove the selected ones
                 for (int season : selectedSeasons) {
-                    TvShowDatabaseUtils.removeSeason(activityContext, mShowId, season);
+                    TvShowDatabaseUtils.deleteSeason(activityContext, mShowId, season);
                 }
 
                 // Check if we've removed all TV show episodes
@@ -286,7 +286,7 @@ public class TvShowSeasonsFragment extends Fragment {
                     getActivity().finish();
                 } else {
                     // There's still episodes left, so re-load the TV show seasons
-                    loadSeasons(true);
+                    loadSeasons();
                 }
             }
         });
@@ -345,12 +345,11 @@ public class TvShowSeasonsFragment extends Fragment {
                 convertView = inflater.inflate(R.layout.grid_season_cover, container, false);
                 holder = new CoverItem();
 
-                holder.mLinearLayout = (LinearLayout) convertView.findViewById(R.id.card_layout);
                 holder.cover = (ImageView) convertView.findViewById(R.id.cover);
                 holder.highlight = (ImageView) convertView.findViewById(R.id.highlight);
                 holder.text = (TextView) convertView.findViewById(R.id.text);
                 holder.text.setSingleLine(true);
-                holder.subtext = (TextView) convertView.findViewById(R.id.gridCoverSubtitle);
+                holder.subtext = (TextView) convertView.findViewById(R.id.sub_text);
                 holder.subtext.setSingleLine(true);
 
                 holder.text.setTypeface(TypefaceUtils.getRobotoMedium(mContext));
@@ -393,12 +392,6 @@ public class TvShowSeasonsFragment extends Fragment {
 
     private class SeasonLoader extends LibrarySectionAsyncTask<Void, Void, Void> {
 
-        private boolean mSelectFirstSeason;
-
-        public SeasonLoader(boolean selectFirstSeason) {
-            mSelectFirstSeason = selectFirstSeason;
-        }
-
         @Override
         protected void onPreExecute() {
             mItems.clear();
@@ -408,7 +401,7 @@ public class TvShowSeasonsFragment extends Fragment {
         protected Void doInBackground(Void... params) {
             HashMap<String, EpisodeCounter> seasons = MizuuApplication.getTvEpisodeDbAdapter().getSeasons(mShowId);
 
-            File temp = null;
+            File temp;
             for (String key : seasons.keySet()) {
                 temp = FileUtils.getTvShowSeason(mContext, mShowId, key);
                 mItems.add(new GridSeason(mContext, mShowId, Integer.valueOf(key), seasons.get(key).getEpisodeCount(), seasons.get(key).getWatchedCount(),
@@ -417,7 +410,6 @@ public class TvShowSeasonsFragment extends Fragment {
             }
 
             seasons.clear();
-            seasons = null;
 
             Collections.sort(mItems);
 
@@ -434,22 +426,18 @@ public class TvShowSeasonsFragment extends Fragment {
     private void syncWatchedStatusWithTrakt(final Set<Integer> checkedSeasons, final boolean watched) {
         new com.miz.functions.AsyncTask<Void, Boolean, Boolean>() {
 
-            private Set<Integer> mSelectedSeasons;
-            private List<TvShowEpisode> mEpisodes = new ArrayList<TvShowEpisode>();
+            private List<TvShowEpisode> mEpisodes = new ArrayList<>();
 
             @Override
             protected void onPreExecute() {
-                mSelectedSeasons = new HashSet<Integer>(checkedSeasons);
-
                 DbAdapterTvShowEpisodes db = MizuuApplication.getTvEpisodeDbAdapter();
 
-                for (int season : mSelectedSeasons) {
-                    List<GridEpisode> temp = db.getEpisodesInSeason(mContext, mShowId, mItems.get(season).getSeason());
+                for (int season : checkedSeasons) {
+                    List<GridEpisode> temp = db.getEpisodesInSeason(mContext, mShowId, season);
                     for (int i = 0; i < temp.size(); i++) {
                         mEpisodes.add(new TvShowEpisode(mShowId, temp.get(i).getEpisode(), temp.get(i).getSeason()));
                     }
                     temp.clear();
-                    temp = null;
                 }
             }
 

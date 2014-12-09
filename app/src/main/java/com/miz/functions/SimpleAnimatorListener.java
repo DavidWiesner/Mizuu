@@ -1,4 +1,4 @@
-/*
+package com.miz.functions;/*
  * Copyright (C) 2014 Michell Bak
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,35 +14,24 @@
  * limitations under the License.
  */
 
-package com.miz.functions;
+import android.animation.Animator;
 
-import android.support.v4.app.Fragment;
+/**
+ * Simple animator listener that lets you override just
+ * the methods you need rather than all of them.
+ */
+public class SimpleAnimatorListener implements Animator.AnimatorListener {
 
-public class SpinnerItem {
-	
-	private Fragment mFragment;
-	private String mTitle, mSubtitle;
-	
-	public SpinnerItem(String title, String subtitle) {
-		mTitle = title;
-		mSubtitle = subtitle;
-	}
-	
-	public SpinnerItem(String title, String subtitle, Fragment fragment) {
-		mTitle = title;
-		mSubtitle = subtitle;
-		mFragment = fragment;
-	}
-	
-	public String getTitle() {
-		return mTitle;
-	}
-	
-	public String getSubtitle() {
-		return mSubtitle;
-	}
-	
-	public Fragment getFragment() {
-		return mFragment;
-	}
+    @Override
+    public void onAnimationStart(Animator animation) {}
+
+    @Override
+    public void onAnimationEnd(Animator animation) {}
+
+    @Override
+    public void onAnimationCancel(Animator animation) {}
+
+    @Override
+    public void onAnimationRepeat(Animator animation) {}
+
 }

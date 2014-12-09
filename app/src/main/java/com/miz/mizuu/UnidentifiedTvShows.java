@@ -208,24 +208,24 @@ public class UnidentifiedTvShows extends MizActivity {
 						.setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 
-								TvShowDatabaseUtils.removeAllUnidentifiedFiles();
+					TvShowDatabaseUtils.deleteAllUnidentifiedFiles();
 
-								mFilepaths.clear();
+					mFilepaths.clear();
+					
+					((BaseAdapter) mList.getAdapter()).notifyDataSetChanged();
+					enableNoFilesMessage(true);
+				}
+			})
+			.setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			})
+			.create().show();
 
-								((BaseAdapter) mList.getAdapter()).notifyDataSetChanged();
-								enableNoFilesMessage(true);
-							}
-						})
-						.setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								dialog.cancel();
-							}
-						})
-						.create().show();
-
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
 		}
 	}
 

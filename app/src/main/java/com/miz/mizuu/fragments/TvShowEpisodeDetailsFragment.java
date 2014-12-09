@@ -55,7 +55,7 @@ import com.miz.functions.FileSource;
 import com.miz.functions.Filepath;
 import com.miz.functions.MizLib;
 import com.miz.functions.PaletteLoader;
-import com.miz.identification.ShowStructure;
+import com.miz.functions.SimpleAnimatorListener;
 import com.miz.mizuu.EditTvShowEpisode;
 import com.miz.mizuu.IdentifyTvShowEpisode;
 import com.miz.mizuu.MizuuApplication;
@@ -66,6 +66,7 @@ import com.miz.service.DeleteFile;
 import com.miz.service.MakeAvailableOffline;
 import com.miz.utils.FileUtils;
 import com.miz.utils.LocalBroadcastUtils;
+import com.miz.utils.TvShowDatabaseUtils;
 import com.miz.utils.TypefaceUtils;
 import com.miz.utils.VideoUtils;
 import com.miz.utils.ViewUtils;
@@ -199,22 +200,10 @@ import static com.miz.functions.PreferenceKeys.SHOW_FILE_LOCATION;
         mFab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                ViewUtils.animateFabJump(v, new Animator.AnimatorListener() {
+                ViewUtils.animateFabJump(v, new SimpleAnimatorListener() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         play();
-                    }
-
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
                     }
                 });
             }
@@ -222,8 +211,7 @@ import static com.miz.functions.PreferenceKeys.SHOW_FILE_LOCATION;
         if (MizLib.isTablet(mContext))
             mFab.setType(FloatingActionButton.TYPE_NORMAL);
 
-        final boolean fullscreen = MizuuApplication.isFullscreen(getActivity());
-        final int height = fullscreen ? MizLib.getActionBarHeight(getActivity()) : MizLib.getActionBarAndStatusBarHeight(getActivity());
+        final int height = MizLib.getActionBarAndStatusBarHeight(getActivity());
 
         mScrollView = (ObservableScrollView) view.findViewById(R.id.observableScrollView);
         mScrollView.setOnScrollChangedListener(new OnScrollChangedListener() {
@@ -233,7 +221,7 @@ import static com.miz.functions.PreferenceKeys.SHOW_FILE_LOCATION;
                 final float ratio = (float) Math.min(Math.max(t, 0), headerHeight) / headerHeight;
                 final int newAlpha = (int) (ratio * 255);
 
-	            mBus.post(new BusToolbarColorObject(mToolbarColor, newAlpha));
+                mBus.post(new BusToolbarColorObject(mToolbarColor, newAlpha));
 
                 if (MizLib.isPortrait(mContext)) {
                     // Such parallax, much wow
@@ -678,47 +666,19 @@ import static com.miz.functions.PreferenceKeys.SHOW_FILE_LOCATION;
                 .setCancelable(false)
                 .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // Create and open database
-                        mDatabaseHelper = MizuuApplication.getTvEpisodeDbAdapter();
-                        boolean deleted = true;
-                        //if (mIgnoreDeletedFiles) TODO fix this!
-                        //deleted = mDatabaseHelper.ignoreEpisode(mEpisode.getRowId());
-                        //else
-                        for (Filepath path : mEpisode.getFilepaths())
-                            deleted = deleted && MizuuApplication.getTvShowEpisodeMappingsDbAdapter().deleteFilepath(path.getFullFilepath());
+                        TvShowDatabaseUtils.deleteEpisode(mContext, mEpisode.getShowId(),
+                                MizLib.getInteger(mEpisode.getSeason()), MizLib.getInteger(mEpisode.getEpisode()));
 
-                        if (deleted) {
-                            try {
-                                // Delete episode images
-                                File episodePhoto = FileUtils.getTvShowEpisode(getActivity(), mEpisode.getShowId(), mEpisode.getSeason(), mEpisode.getEpisode());
-                                if (episodePhoto.exists()) {
-                                    MizLib.deleteFile(episodePhoto);
-                                }
-                            } catch (NullPointerException e) {} // No file to delete
-
-                            if (mDatabaseHelper.getEpisodeCount(mEpisode.getShowId()) == 0) { // No more episodes for this show
-                                DbAdapterTvShows dbShow = MizuuApplication.getTvDbAdapter();
-                                boolean deletedShow = dbShow.deleteShow(mEpisode.getShowId());
-
-                                if (deletedShow) {
-                                    MizLib.deleteFile(FileUtils.getTvShowThumb(getActivity(), mEpisode.getShowId()));
-                                    MizLib.deleteFile(FileUtils.getTvShowBackdrop(getActivity(), mEpisode.getShowId()));
-                                }
+                        if (cb.isChecked()) {
+                            for (Filepath path : mEpisode.getFilepaths()) {
+                                Intent deleteIntent = new Intent(getActivity(), DeleteFile.class);
+                                deleteIntent.putExtra("filepath", path.getFilepath());
+                                getActivity().startService(deleteIntent);
                             }
-
-                            if (cb.isChecked()) {
-                                for (Filepath path : mEpisode.getFilepaths()) {
-                                    Intent deleteIntent = new Intent(getActivity(), DeleteFile.class);
-                                    deleteIntent.putExtra("filepath", path.getFilepath());
-                                    getActivity().startService(deleteIntent);
-                                }
-                            }
-
-                            notifyDatasetChanges();
-                            getActivity().finish();
-                        } else {
-                            Toast.makeText(getActivity(), getString(R.string.failedToRemoveEpisode), Toast.LENGTH_SHORT).show();
                         }
+
+                        notifyDatasetChanges();
+                        getActivity().finish();
                     }
                 })
                 .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {

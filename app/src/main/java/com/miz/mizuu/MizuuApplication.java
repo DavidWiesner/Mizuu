@@ -21,8 +21,10 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v7.graphics.Palette;
+import android.widget.Toast;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.miz.abstractclasses.MovieApiService;
@@ -38,6 +40,7 @@ import com.miz.db.DbAdapterTvShowEpisodeMappings;
 import com.miz.db.DbAdapterTvShowEpisodes;
 import com.miz.db.DbAdapterTvShows;
 import com.miz.functions.FileRequestTransformer;
+import com.miz.functions.MizLib;
 import com.miz.functions.OkHttpDownloader;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
@@ -56,7 +59,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static com.miz.functions.PreferenceKeys.FULLSCREEN_TAG;
 import static com.miz.functions.PreferenceKeys.LANGUAGE_PREFERENCE;
 import static com.miz.functions.PreferenceKeys.TV_SHOW_DATA_SOURCE;
 
@@ -268,15 +270,8 @@ public class MizuuApplication extends Application {
 		sPalettes.put(key, palette);
 	}
 
-	public static boolean isFullscreen(Context context) {
-		return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(FULLSCREEN_TAG, false);
-	}
-
 	public static void setupTheme(Context context) {
-		if (isFullscreen(context))
-			context.setTheme(R.style.Mizuu_Theme_FullScreen);
-		else
-			context.setTheme(R.style.Mizuu_Theme);
+		context.setTheme(R.style.Mizuu_Theme);
 	}
 
 	public static Bus getBus() {
@@ -288,7 +283,7 @@ public class MizuuApplication extends Application {
 	public static File getAppFolder(Context c) {
 		if (sBaseAppFolder == null) {
 			sBaseAppFolder = c.getExternalFilesDir(null);
-		}
+        }
 		return sBaseAppFolder;
 	}
 	

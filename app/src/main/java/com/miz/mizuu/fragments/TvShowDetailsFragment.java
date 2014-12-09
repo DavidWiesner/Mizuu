@@ -66,6 +66,7 @@ import com.miz.functions.IntentKeys;
 import com.miz.functions.MizLib;
 import com.miz.functions.PaletteLoader;
 import com.miz.functions.PreferenceKeys;
+import com.miz.functions.SimpleAnimatorListener;
 import com.miz.mizuu.EditTvShow;
 import com.miz.mizuu.IdentifyTvShow;
 import com.miz.mizuu.MizuuApplication;
@@ -207,7 +208,11 @@ public class TvShowDetailsFragment extends Fragment {
         mToolbar.setBackgroundResource(android.R.color.transparent);
         ViewUtils.setProperToolbarSize(mContext, mToolbar);
 
-        ((ActionBarActivity) getActivity()).setSupportActionBar(mToolbar);
+        try {
+            ((ActionBarActivity) getActivity()).setSupportActionBar(mToolbar);
+        } catch (Throwable t) {
+            // Samsung pls...
+        }
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // This needs to be re-initialized here and not in onCreate()
@@ -234,20 +239,11 @@ public class TvShowDetailsFragment extends Fragment {
         mFab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                ViewUtils.animateFabJump(v, new Animator.AnimatorListener() {
+                ViewUtils.animateFabJump(v, new SimpleAnimatorListener() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         playFirstEpisode();
                     }
-
-                    @Override
-                    public void onAnimationStart(Animator animation) {}
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {}
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {}
                 });
             }
         });
@@ -258,8 +254,7 @@ public class TvShowDetailsFragment extends Fragment {
         v.findViewById(R.id.textView3).setVisibility(View.GONE); // File
         v.findViewById(R.id.textView6).setVisibility(View.GONE); // Tagline
 
-        final boolean fullscreen = MizuuApplication.isFullscreen(mContext);
-        final int height = fullscreen ? MizLib.getActionBarHeight(mContext) : MizLib.getActionBarAndStatusBarHeight(mContext);
+        final int height = MizLib.getActionBarAndStatusBarHeight(mContext);
 
         mScrollView.setOnScrollChangedListener(new OnScrollChangedListener() {
             @Override
@@ -496,7 +491,7 @@ public class TvShowDetailsFragment extends Fragment {
                 HashMap<String, EpisodeCounter> seasons = MizuuApplication.getTvEpisodeDbAdapter().getSeasons(thisShow.getId());
 
                 for (String key : seasons.keySet()) {
-                   File temp = FileUtils.getTvShowSeason(mContext, thisShow.getId(), key);
+                    File temp = FileUtils.getTvShowSeason(mContext, thisShow.getId(), key);
                     mSeasons.add(new GridSeason(mContext, thisShow.getId(), Integer.valueOf(key), seasons.get(key).getEpisodeCount(), seasons.get(key).getWatchedCount(),
                             temp.exists() ? temp :
                                     FileUtils.getTvShowThumb(mContext, thisShow.getId())));
@@ -647,7 +642,7 @@ public class TvShowDetailsFragment extends Fragment {
     private void playFirstEpisode() {
 
         DbAdapterTvShowEpisodes dbAdapter = MizuuApplication.getTvEpisodeDbAdapter();
-        Cursor cursor = dbAdapter.getAllEpisodes(thisShow.getId(), DbAdapterTvShowEpisodes.OLDEST_FIRST);
+        Cursor cursor = dbAdapter.getEpisodes(thisShow.getId());
         TvShowEpisode episode = null;
 
         if (cursor != null) {

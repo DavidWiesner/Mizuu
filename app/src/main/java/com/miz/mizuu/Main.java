@@ -25,6 +25,8 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -33,6 +35,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -52,18 +56,18 @@ import android.widget.Toast;
 import com.miz.base.MizActivity;
 import com.miz.db.DbAdapterMovies;
 import com.miz.db.DbAdapterTvShows;
+import com.miz.functions.BlurTransformation;
 import com.miz.functions.MenuItem;
 import com.miz.functions.MizLib;
 import com.miz.mizuu.fragments.AccountsFragment;
 import com.miz.mizuu.fragments.ContactDeveloperFragment;
 import com.miz.mizuu.fragments.MovieDiscoveryViewPagerFragment;
 import com.miz.mizuu.fragments.MovieLibraryOverviewFragment;
-import com.miz.mizuu.fragments.TvShowLibraryFragment;
+import com.miz.mizuu.fragments.TvShowLibraryOverviewFragment;
 import com.miz.mizuu.fragments.WebVideosViewPagerFragment;
 import com.miz.utils.LocalBroadcastUtils;
 import com.miz.utils.TypefaceUtils;
 import com.miz.utils.ViewUtils;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -181,8 +185,6 @@ public class Main extends MizActivity {
         if (type == 0)
             type = 1;
 
-        setTitle(null);
-
         Fragment frag = getSupportFragmentManager().findFragmentByTag("frag" + type);
         if (frag == null) {
             final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -192,7 +194,7 @@ public class Main extends MizActivity {
                     ft.replace(R.id.content_frame, MovieLibraryOverviewFragment.newInstance(), "frag" + type);
                     break;
                 case SHOWS:
-                    ft.replace(R.id.content_frame, TvShowLibraryFragment.newInstance(), "frag" + type);
+                    ft.replace(R.id.content_frame, TvShowLibraryOverviewFragment.newInstance(), "frag" + type);
                     break;
                 case WEB_MOVIES:
                     ft.replace(R.id.content_frame, MovieDiscoveryViewPagerFragment.newInstance(), "frag" + type);
@@ -202,6 +204,21 @@ public class Main extends MizActivity {
                     break;
             }
             ft.commit();
+        }
+
+        switch (type) {
+            case MOVIES:
+                setTitle(R.string.chooserMovies);
+                break;
+            case SHOWS:
+                setTitle(R.string.chooserTVShows);
+                break;
+            case WEB_MOVIES:
+                setTitle(R.string.drawerOnlineMovies);
+                break;
+            case WEB_VIDEOS:
+                setTitle(R.string.drawerWebVideos);
+                break;
         }
 
         selectListIndex(type);
@@ -447,27 +464,32 @@ public class Main extends MizActivity {
                     plusIcon.setVisibility(View.VISIBLE);
                 }
 
-                // User avatar
-                mPicasso.load(new File(MizuuApplication.getCacheFolder(getApplicationContext()), "avatar.jpg"))
-                        .resize(MizLib.convertDpToPixels(getApplicationContext(), 64), MizLib.convertDpToPixels(getApplicationContext(), 64))
-                        .into(userImage, new Callback() {
-                            @Override
-                            public void onError() {
-                                userImage.setVisibility(View.GONE);
-                            }
-
-                            @Override
-                            public void onSuccess() {}
-                        });
+                // This should be loaded in the background, but doesn't matter much at the moment
+                Bitmap src = BitmapFactory.decodeFile(new File(MizuuApplication.getCacheFolder(getApplicationContext()), "avatar.jpg").getAbsolutePath());
+                if (src != null) {
+                    RoundedBitmapDrawable dr = RoundedBitmapDrawableFactory.create(getResources(), src);
+                    dr.setCornerRadius(Math.min(dr.getMinimumWidth(), dr.getMinimumHeight()));
+                    dr.setAntiAlias(true);
+                    userImage.setImageDrawable(dr);
+                } else {
+                    userImage.setVisibility(View.GONE);
+                }
 
                 // Background image
                 if (!TextUtils.isEmpty(mBackdropPath))
-                    mPicasso.load(mBackdropPath).resize(MizLib.convertDpToPixels(getApplicationContext(), 320), MizLib.convertDpToPixels(getApplicationContext(), 180)).into(backgroundImage);
+                    mPicasso.load(mBackdropPath)
+                            .resize(MizLib.convertDpToPixels(getApplicationContext(), 320),
+                                    MizLib.convertDpToPixels(getApplicationContext(), 180))
+                            .transform(new BlurTransformation(getApplicationContext(), mBackdropPath + "-blur", 5))
+                            .into(backgroundImage);
                 else
-                    mPicasso.load(R.drawable.default_menu_backdrop).resize(MizLib.convertDpToPixels(getApplicationContext(), 320), MizLib.convertDpToPixels(getApplicationContext(), 180)).into(backgroundImage);
+                    mPicasso.load(R.drawable.default_menu_backdrop)
+                            .resize(MizLib.convertDpToPixels(getApplicationContext(), 320),
+                                    MizLib.convertDpToPixels(getApplicationContext(), 180))
+                            .into(backgroundImage);
 
                 // Dark color filter on the background image
-                backgroundImage.setColorFilter(Color.parseColor("#66181818"), android.graphics.PorterDuff.Mode.SRC_OVER);
+                backgroundImage.setColorFilter(Color.parseColor("#50181818"), android.graphics.PorterDuff.Mode.SRC_OVER);
 
                 // Take the user to the Trakt login screen
                 convertView.findViewById(R.id.personalizedArea).setOnClickListener(new View.OnClickListener() {

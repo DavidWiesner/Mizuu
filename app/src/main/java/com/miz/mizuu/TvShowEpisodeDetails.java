@@ -52,7 +52,7 @@ public class TvShowEpisodeDetails extends MizActivity {
 	protected int getLayoutResource() {
 		return R.layout.viewpager_with_toolbar_overlay;
 	}
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		mBus = MizuuApplication.getBus();
@@ -61,7 +61,7 @@ public class TvShowEpisodeDetails extends MizActivity {
         // Set theme
         setTheme(R.style.Mizuu_Theme_NoBackground);
 
-        ViewUtils.setupWindowFlagsForStatusbarOverlay(getWindow(), isFullscreen(), true);
+        ViewUtils.setupWindowFlagsForStatusbarOverlay(getWindow(), true);
 
         ViewUtils.setProperToolbarSize(this, mToolbar);
 
@@ -71,7 +71,7 @@ public class TvShowEpisodeDetails extends MizActivity {
 
 		mDatabaseHelper = MizuuApplication.getTvEpisodeDbAdapter();
 
-		Cursor cursor = mDatabaseHelper.getAllEpisodes(mShowId, DbAdapterTvShowEpisodes.OLDEST_FIRST);
+		Cursor cursor = mDatabaseHelper.getEpisodes(mShowId);
 		try {
 			while (cursor.moveToNext()) {
 				mEpisodes.add(new TvShowEpisode(this, mShowId,
@@ -166,7 +166,7 @@ public class TvShowEpisodeDetails extends MizActivity {
 			super(fm);
 		}
 
-		@Override
+		@Override  
 		public Fragment getItem(int index) {
 			return TvShowEpisodeDetailsFragment.newInstance(mShowId, Integer.parseInt(mEpisodes.get(index).getSeason()), Integer.parseInt(mEpisodes.get(index).getEpisode()));
 		}

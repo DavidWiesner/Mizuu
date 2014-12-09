@@ -70,7 +70,6 @@ import java.util.Random;
 import static com.miz.functions.PreferenceKeys.GRID_ITEM_SIZE;
 import static com.miz.functions.PreferenceKeys.IGNORED_TITLE_PREFIXES;
 import static com.miz.functions.PreferenceKeys.SHOW_TITLES_IN_GRID;
-import static com.miz.functions.SortingKeys.ALL_MOVIES;
 
 public class CollectionLibraryFragment extends Fragment implements OnSharedPreferenceChangeListener {
 
@@ -347,14 +346,13 @@ public class CollectionLibraryFragment extends Fragment implements OnSharedPrefe
 
             CoverItem holder;
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.grid_item, container, false);
+                convertView = mInflater.inflate(R.layout.grid_cover_two_line, container, false);
                 holder = new CoverItem();
 
-                holder.mLinearLayout = (LinearLayout) convertView.findViewById(R.id.card_layout);
                 holder.cover = (ImageView) convertView.findViewById(R.id.cover);
                 holder.text = (TextView) convertView.findViewById(R.id.text);
                 holder.text.setSingleLine(true);
-                holder.subtext = (TextView) convertView.findViewById(R.id.gridCoverSubtitle);
+                holder.subtext = (TextView) convertView.findViewById(R.id.sub_text);
                 holder.subtext.setSingleLine(true);
 
                 holder.text.setTypeface(TypefaceUtils.getRobotoMedium(mContext));
@@ -418,7 +416,7 @@ public class CollectionLibraryFragment extends Fragment implements OnSharedPrefe
                 return false;
 
             switch (mPosition) {
-                case ALL_MOVIES:
+                case 0:
                     for (int i = 0; i < mMovies.size(); i++)
                         mTempKeys.add(i);
                     break;

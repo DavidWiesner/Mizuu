@@ -68,6 +68,7 @@ import com.miz.functions.MizLib;
 import com.miz.functions.Movie;
 import com.miz.functions.PaletteLoader;
 import com.miz.functions.PreferenceKeys;
+import com.miz.functions.SimpleAnimatorListener;
 import com.miz.mizuu.EditMovie;
 import com.miz.mizuu.IdentifyMovie;
 import com.miz.mizuu.Main;
@@ -232,7 +233,11 @@ public class MovieDetailsFragment extends Fragment {
         mToolbar.setBackgroundResource(android.R.color.transparent);
         ViewUtils.setProperToolbarSize(mContext, mToolbar);
 
-        ((ActionBarActivity) getActivity()).setSupportActionBar(mToolbar);
+        try {
+            ((ActionBarActivity) getActivity()).setSupportActionBar(mToolbar);
+        } catch (Throwable t) {
+            // Samsung pls...
+        }
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // This needs to be re-initialized here and not in onCreate()
@@ -258,28 +263,18 @@ public class MovieDetailsFragment extends Fragment {
         mFab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                ViewUtils.animateFabJump(v, new Animator.AnimatorListener() {
+                ViewUtils.animateFabJump(v, new SimpleAnimatorListener() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         playMovie();
                     }
-
-                    @Override
-                    public void onAnimationStart(Animator animation) {}
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {}
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {}
                 });
             }
         });
         if (MizLib.isTablet(mContext))
             mFab.setType(FloatingActionButton.TYPE_NORMAL);
 
-        final boolean fullscreen = MizuuApplication.isFullscreen(mContext);
-        final int height = fullscreen ? MizLib.getActionBarHeight(mContext) : MizLib.getActionBarAndStatusBarHeight(mContext);
+        final int height = MizLib.getActionBarAndStatusBarHeight(mContext);
 
         mScrollView.setOnScrollChangedListener(new OnScrollChangedListener() {
             @Override
