@@ -92,11 +92,11 @@ public class IdentifyTvShowFragment extends Fragment {
      */
     public IdentifyTvShowFragment() {}
 
+    public static IdentifyTvShowFragment newInstance(String showTitle, String showId) {
+        return newInstance(showTitle, showId, null);
+    }
+
 	public static IdentifyTvShowFragment newInstance(String showTitle, String showId, final String[] files) {
-        IdentifyTvShowFragment frag = new IdentifyTvShowFragment();
-        Bundle args = new Bundle();
-        args.putString("showTitle", showTitle);
-        args.putString("showId", showId);
 		IdentifyTvShowFragment frag = new IdentifyTvShowFragment();
 		Bundle args = new Bundle();
 		args.putString("showTitle", showTitle);
